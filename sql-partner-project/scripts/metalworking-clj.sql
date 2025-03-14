@@ -30,6 +30,19 @@ SELECT *
 FROM sales_order_job_links
 LIMIT 25;
 
+SELECT 
+	SUM(smp_freight_subtotal)
+	,SUM(smp_freight_subtotal_foreign)
+	,SUM(smp_freight_total)
+	,SUM(smp_freight_total_foreign)
+	,SUM(smp_shipment_subtotal)
+	,SUM(smp_shipment_subtotal_foreign)
+	,SUM(smp_shipment_total)
+	,SUM(smp_shipment_total_foreign)
+	,SUM(smp_weight_subtotal)
+	,SUM(smp_weight_total)
+FROM shipments
+LIMIT 25;
 
 -- metalworkingsolutions.com
 -- What do the acronyms stand for?
@@ -89,7 +102,7 @@ ON;
 
 -- Attempt 3
 SELECT
-	imp_short_description AS short
+	imp_short_description
 	,jmp_part_id
 	,COUNT(jmp_job_id)
 FROM jobs a
@@ -101,8 +114,17 @@ ORDER BY 3 DESC;
 -- Answers part 1 of question
 
 
--- next part
-WITH job_ops_count AS(
+-- Full Answer!!
+WITH parts_jobs AS(
+SELECT
+	imp_short_description
+	,jmp_part_id
+	,COUNT(jmp_job_id) AS n_of_jobs
+FROM jobs a
+FULL JOIN parts b
+	ON a.jmp_part_id = b.imp_part_id
+	GROUP BY 1,2),
+job_ops_count AS(
 SELECT 
 	jmo_job_id
 	,SUM(a.jmo_actual_production_hours) AS twenty_four
@@ -117,30 +139,32 @@ ORDER BY twenty_four DESC
 full_hours AS(
 SELECT
 	jmo_job_id
-	,CASE WHEN total_hours IS NOT NULL THEN total_hours 
-	WHEN total_hours IS NULL AND twenty_three IS NULL THEN twenty_four
-	ELSE twenty_three END AS hours
+	,COALESCE(total_hours, twenty_three, twenty_four) AS hours
 FROM job_ops_count
 ORDER BY 2 DESC
 ),
-next_CTE AS(
+join_cte AS(
 SELECT
 	jmo_job_id
 	,hours
-	,jmp_part_id
-	,imp_short_description
+	,b.jmp_part_id
+	,c.imp_short_description
+	,n_of_jobs
 FROM full_hours a
 JOIN jobs b
 	ON a.jmo_job_id = b.jmp_job_id
 JOIN parts c
 	ON b.jmp_part_id = c.imp_part_id
+JOIN parts_jobs d
+	ON c.imp_part_id = d.jmp_part_id
 ORDER BY 2 DESC)
 SELECT 
 	imp_short_description
 	,jmp_part_id
-	,SUM(hours)
-FROM next_CTE
-GROUP BY imp_short_description, jmp_part_id
+	,SUM(hours) AS production_hours
+	,n_of_jobs
+FROM join_cte
+GROUP BY imp_short_description, jmp_part_id, n_of_jobs
 ORDER BY 3 DESC;
 
 
