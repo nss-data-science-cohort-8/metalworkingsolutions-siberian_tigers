@@ -57,67 +57,10 @@ Which ones are taking the largest amount of production hours
 /* Use distinct count on the job ids and group by the part id.
 Then use a sum of hours over() based on the job ids? */
 
--- Attempt 1
-SELECT
-	DISTINCT imp_part_id
-	,SUM(jmp_quantity_completed) OVER(PARTITION BY imp_part_id) AS volume
-	,jmo_job_id AS id
-	,imp_long_description_text AS name
-	-- ,SUM(jmo_actual_production_hours) AS hours
-FROM job_operations_2024 AS a
-LEFT JOIN parts AS b
-	ON jmo_part_id = imp_part_id
-LEFT JOIN jobs AS c
-	ON jmo_job_id = jmp_job_id
-WHERE imp_part_id IS NOT NULL
--- ORDER BY hours DESC 
-LIMIT 25;
-
-
-
--- Attempt 2
-WITH jobs_count AS(
-SELECT COUNT(DISTINCT jmp_job_id) AS jobs
-FROM jobs
-),
-job_ops_count AS(
-SELECT COUNT(DISTINCT jmo_job_id) AS job_ops
-FROM job_operations_2024
-FULL JOIN job_operations_2023
-	USING(jmo_job_id)
-),
-parts_count AS(
-SELECT COUNT(DISTINCT imp_part_id) AS part_jobs
-FROM parts
-)
-
-SELECT 
-	jobs
-	,job_ops
-FROM jobs_count
-JOIN job_ops_count
-ON;
-
-
-
--- Attempt 3
-SELECT
-	imp_short_description
-	,jmp_part_id
-	,COUNT(jmp_job_id)
-FROM jobs a
-FULL JOIN parts b
-	ON a.jmp_part_id = b.imp_part_id
-GROUP BY 1,2
-ORDER BY 3 DESC;
-
--- Answers part 1 of question
-
-
 -- Full Answer!!
 WITH parts_jobs AS(
 SELECT
-	imp_short_description
+	imp_long_description_text
 	,jmp_part_id
 	,COUNT(jmp_job_id) AS n_of_jobs
 FROM jobs a
@@ -148,7 +91,7 @@ SELECT
 	jmo_job_id
 	,hours
 	,b.jmp_part_id
-	,c.imp_short_description
+	,c.imp_long_description_text
 	,n_of_jobs
 FROM full_hours a
 JOIN jobs b
@@ -159,13 +102,40 @@ JOIN parts_jobs d
 	ON c.imp_part_id = d.jmp_part_id
 ORDER BY 2 DESC)
 SELECT 
-	imp_short_description
+	imp_long_description_text
 	,jmp_part_id
 	,SUM(hours) AS production_hours
 	,n_of_jobs
 FROM join_cte
-GROUP BY imp_short_description, jmp_part_id, n_of_jobs
+GROUP BY imp_long_description_text, jmp_part_id, n_of_jobs
 ORDER BY 3 DESC;
 
 
+/* Q2b. How have the parts produced changed over time? 
+Are there any trends? Are there parts that were prominent in 2023
+but are no longer being produced or are being produced at much lower 
+volumes in 2024? Have any new parts become more commonly produced 
+over time? */
+
+SELECT 
+	j.jmp_job_id, 
+	j.jmp_production_due_date, 
+	j.jmp_part_id, 
+	j.jmp_part_short_description, 
+	j.jmp_part_long_description_text, 
+	j.jmp_order_quantity, 
+	SUM(j.jmp_order_quantity) OVER(PARTITION BY j.jmp_part_long_description_text) AS Total_Quantity_For_Manufactured_Part
+FROM jobs AS j
+ORDER BY Total_Quantity_For_Manufactured_Part DESC, j.jmp_part_id ASC, j.jmp_production_due_date ASC
+;
+
+SELECT 	
+	j.jmp_production_due_date, 
+	j.jmp_part_id, 
+	j.jmp_part_long_description_text, 
+	SUM(j.jmp_order_quantity)  AS Total_Quantity_For_Manufactured_Part
+FROM jobs AS j
+GROUP BY j.jmp_production_due_date, j.jmp_part_id, j.jmp_part_long_description_text
+ORDER BY Total_Quantity_For_Manufactured_Part DESC, j.jmp_part_id ASC, j.jmp_production_due_date ASC
+;
 
