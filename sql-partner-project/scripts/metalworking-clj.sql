@@ -3,7 +3,6 @@
 SELECT * 
 FROM jobs
 ORDER BY jmp_job_id
-LIMIT 25;
 
 SELECT *
 FROM job_operations_2023
@@ -22,13 +21,29 @@ SELECT *
 FROM part_operations
 LIMIT 25;
 
-SELECT *
+SELECT omp_created_date, omp_order_date
 FROM sales_orders
-LIMIT 25;
+INNER JOIN jobs
+	ON ;
 
 SELECT *
 FROM sales_order_job_links
 LIMIT 25;
+
+SELECT smp_created_date, smp_ship_date
+FROM shipments
+WHERE smp_created_date < smp_ship_date;
+
+SELECT 
+	smp_created_date
+	,smp_ship_date
+	,sml_created_date
+	,sml_job_id
+FROM shipment_lines
+INNER JOIN shipments
+	ON sml_shipment_id = smp_shipment_id
+INNER JOIN jobs
+	ON jmp_job_id = sml_job_id;
 
 SELECT 
 	SUM(smp_freight_subtotal)
@@ -44,6 +59,23 @@ SELECT
 FROM shipments
 LIMIT 25;
 
+SELECT 
+	sml_job_quantity_shipped
+	,jmp_order_quantity
+	,sml_job_id
+	,sml_extended_price_base
+	,jmp_part_id
+	,sml_created_date
+	,jmp_created_date
+	,sml_shipped_complete
+FROM shipment_lines
+INNER JOIN jobs
+	ON sml_part_id = jmp_part_id
+	AND sml_job_id = jmp_job_id
+ORDER BY jmp_job_id, jmp_part_id, sml_created_date;
+
+SELECT *
+FROM shipment_lines;
 
 SELECT jmp_job_id, COUNT(DISTINCT jmp_part_id) FROM jobs
 GROUP BY 1
@@ -73,9 +105,9 @@ FULL JOIN parts b
 job_ops_count AS(
 SELECT 
 	jmo_job_id
-	,SUM(a.jmo_actual_production_hours) AS twenty_four
-	,SUM(b.jmo_actual_production_hours) AS twenty_three
-	,(SUM(a.jmo_actual_production_hours) + SUM(b.jmo_actual_production_hours)) AS total_hours
+	,SUM(a.jmo_estimated_production_hours) AS twenty_four
+	,SUM(b.jmo_estimated_production_hours) AS twenty_three
+	,(SUM(a.jmo_estimated_production_hours) + SUM(b.jmo_estimated_production_hours)) AS total_hours
 FROM job_operations_2024 a
 FULL JOIN job_operations_2023 b
 	USING(jmo_job_id)
@@ -91,12 +123,16 @@ ORDER BY 2 DESC
 ),
 join_cte AS(
 SELECT
-	c.imp_created_date
-	jmo_job_id
+	b.jmp_created_date
+	,c.imp_created_date
+	,jmo_job_id
 	,hours
 	,b.jmp_part_id
 	,c.imp_long_description_text
 	,n_of_jobs
+	,b.jmp_closed_date
+	,b.jmp_production_due_date
+	,b.jmp_order_quantity
 FROM full_hours a
 JOIN jobs b
 	ON a.jmo_job_id = b.jmp_job_id
@@ -107,41 +143,39 @@ JOIN parts_jobs d
 ORDER BY 2 DESC),
 join_2 AS( 
 SELECT
-	imp_long_description_text
+	jmp_created_date
+	,jmo_job_id
+	,imp_long_description_text
 	,jmp_part_id
 	,SUM(hours) AS production_hours
 	,n_of_jobs
+	,jmp_closed_date
+	,jmp_production_due_date
+	,jmp_order_quantity
 FROM join_cte
-GROUP BY 1,2,4
+GROUP BY 1,2,3,4,6,7,8,9
 ORDER BY 3 DESC
 ), 
 revenue_cte AS (
 SELECT
-	sml_part_id AS part_id,
-	SUM(sml_extended_price_base) AS revenue
+	sml_shipment_id,
+	sml_job_id,
+	sml_extended_price_base AS revenue,
+	SUM(sml_job_quantity_shipped) AS total_quantity_shipped,
+	MAX(sml_created_date) AS created_shipment
 FROM shipment_lines
-GROUP BY 1
-),
-job_dates_quantity AS(
-SELECT 
-	j.jmp_created_date,
-	j.jmp_closed_date,
-	j.jmp_production_due_date,
-	j.jmp_job_id,
-	j.jmp_part_id, 
-	j.jmp_part_long_description_text, 
-	j.jmp_order_quantity
-FROM jobs j
-ORDER BY j.jmp_part_id ASC, j.jmp_production_due_date ASC
+GROUP BY 1,2,3
 )
 SELECT
 	c.imp_created_date AS part_created,
-	j.jmp_created_date AS job_created,
-	j.jmp_closed_date AS job_finished,
-	j.jmp_production_due_date AS job_due_date,
+	a.jmp_created_date AS job_created,
+	a.jmp_closed_date AS job_finished,
+	b.created_shipment,
+	a.jmp_production_due_date AS job_due_date,
   a.imp_long_description_text AS part_name,
   a.jmp_part_id AS part_id,
-  j.jmp_job_id AS job_id,
+  b.sml_job_id AS job_id,
+  b.sml_shipment_id,
   a.production_hours,
   a.n_of_jobs AS number_of_jobs_by_part,
   CASE
@@ -154,15 +188,15 @@ SELECT
 	WHEN a.production_hours < 1 THEN COALESCE(b.revenue, 0) * a.production_hours
     ELSE COALESCE(b.revenue, 0) / a.production_hours
   END AS revenue_per_hour,
-  j.jmp_order_quantity AS quantity_of_part
+  a.jmp_order_quantity AS quantity_of_part,
+  total_quantity_shipped
 FROM join_2 AS a
 LEFT JOIN revenue_cte AS b
-  ON a.jmp_part_id = b.part_id
+  ON a.jmo_job_id = b.sml_job_id
 INNER JOIN parts c
 	ON a.jmp_part_id = c.imp_part_id
-INNER JOIN job_dates_quantity j
-	ON c.imp_part_id = j.jmp_part_id
-ORDER BY part_id;
+WHERE total_quantity_shipped != 0
+ORDER BY job_id DESC;
 
 
 

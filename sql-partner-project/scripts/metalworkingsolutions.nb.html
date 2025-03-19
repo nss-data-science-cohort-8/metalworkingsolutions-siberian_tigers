@@ -1760,108 +1760,182 @@ which allows you to use dplyr verbs to interact with tables in a
 database, but actually execute them in the database.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShEQkkpXG5gYGAifQ== -->
-<pre class="r"><code>library(DBI)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShEQkkpXG5saWJyYXJ5KFJQb3N0Z3JlcylcbmxpYnJhcnkodGlkeXZlcnNlKVxuYGBgIn0= -->
+<pre class="r"><code>library(DBI)
+library(RPostgres)
+library(tidyverse)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJhEQknigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuMlxuIn0= -->
-<pre><code>Warning: package ‘DBI’ was built under R version 4.4.2</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShSUG9zdGdyZXMpXG5gYGAifQ== -->
-<pre class="r"><code>library(RPostgres)</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29tcGxldGVfZGF0YSA8LSByZWFkX2NzdignLi4vZGF0YS9jb21wbGV0ZWRfdGFibGUuY3N2JylcbmBgYCJ9 -->
+<pre class="r"><code>complete_data &lt;- read_csv(&#39;../data/completed_table.csv&#39;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJhSUG9zdGdyZXPigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuM1xuIn0= -->
-<pre><code>Warning: package ‘RPostgres’ was built under R version 4.4.3</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGAifQ== -->
-<pre class="r"><code>library(tidyverse)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogcGFja2FnZSDigJh0aWR5dmVyc2XigJkgd2FzIGJ1aWx0IHVuZGVyIFIgdmVyc2lvbiA0LjQuMldhcm5pbmc6IHBhY2thZ2Ug4oCYZm9yY2F0c+KAmSB3YXMgYnVpbHQgdW5kZXIgUiB2ZXJzaW9uIDQuNC4y4pSA4pSAIEF0dGFjaGluZyBjb3JlIHRpZHl2ZXJzZSBwYWNrYWdlcyDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlIDIuMC4wIOKUgOKUgFxu4pyUIGRwbHlyICAgICAxLjEuNCAgICAg4pyUIHJlYWRyICAgICAyLjEuNVxu4pyUIGZvcmNhdHMgICAxLjAuMCAgICAg4pyUIHN0cmluZ3IgICAxLjUuMVxu4pyUIGdncGxvdDIgICAzLjUuMSAgICAg4pyUIHRpYmJsZSAgICAzLjIuMVxu4pyUIGx1YnJpZGF0ZSAxLjkuMyAgICAg4pyUIHRpZHlyICAgICAxLjMuMVxu4pyUIHB1cnJyICAgICAxLjAuMiAgICAg4pSA4pSAIENvbmZsaWN0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAgdGlkeXZlcnNlX2NvbmZsaWN0cygpIOKUgOKUgFxu4pyWIGRwbHlyOjpmaWx0ZXIoKSBtYXNrcyBzdGF0czo6ZmlsdGVyKClcbuKcliBkcGx5cjo6bGFnKCkgICAgbWFza3Mgc3RhdHM6OmxhZygpXG7ihLkgVXNlIHRoZSBcdTAwMWJdODs7aHR0cDovL2NvbmZsaWN0ZWQuci1saWIub3JnL1x1MDAwN2NvbmZsaWN0ZWQgcGFja2FnZVx1MDAxYl04OztcdTAwMDcgdG8gZm9yY2UgYWxsIGNvbmZsaWN0cyB0byBiZWNvbWUgZXJyb3JzXG4ifQ== -->
-<pre><code>Warning: package ‘tidyverse’ was built under R version 4.4.2Warning: package ‘forcats’ was built under R version 4.4.2── Attaching core tidyverse packages ──────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.2     ── Conflicts ────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMTU3NTcgQ29sdW1uczogMTbilIDilIAgQ29sdW1uIHNwZWNpZmljYXRpb24g4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSAXG5EZWxpbWl0ZXI6IFwiLFwiXG5jaHIgICg0KTogam9iX2ZpbmlzaGVkLCBwYXJ0X25hbWUsIHBhcnRfaWQsIGpvYl9pZFxuZGJsICAoOCk6IHNtbF9zaGlwbWVudF9pZCwgcHJvZHVjdGlvbl9ob3VycywgbnVtYmVyX29mXy4uLlxuZHR0bSAoNCk6IHBhcnRfY3JlYXRlZCwgam9iX2NyZWF0ZWQsIGNyZWF0ZWRfc2hpcG1lbnQsIC4uLlxu4oS5IFVzZSBgc3BlYygpYCB0byByZXRyaWV2ZSB0aGUgZnVsbCBjb2x1bW4gc3BlY2lmaWNhdGlvbiBmb3IgdGhpcyBkYXRhLlxu4oS5IFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
+<pre><code>Rows: 15757 Columns: 16── Column specification ───────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (4): job_finished, part_name, part_id, job_id
+dbl  (8): sml_shipment_id, production_hours, number_of_...
+dttm (4): part_created, job_created, created_shipment, ...
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Now, we’ll create our connection.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uIDwtIGRiQ29ubmVjdChQb3N0Z3JlcygpLCAgICAgICAgICAgICAgICAgIyBVc2UgdGhlIHBvc3RncmVzIGRyaXZlclxuICAgICAgICAgICAgICAgICBkYm5hbWUgPSAncHJlc2NyaWJlcnMnLCAgICAgIyBOYW1lIG9mIHRoZSBkYXRhYmFzZSB3ZSB3YW50IHRvIGNvbm5lY3QgdG9cbiAgICAgICAgICAgICAgICAgaG9zdCA9ICdsb2NhbGhvc3QnLCAgICAgICAgICMgJ2xvY2FsaG9zdCcgb3IgZWcuICdlYzItNTQtODMtMjAxLTk2LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tJ1xuICAgICAgICAgICAgICAgICBwb3J0ID0gNTQzMiwgXG4gICAgICAgICAgICAgICAgIHVzZXIgPSAncG9zdGdyZXMnLFxuICAgICAgICAgICAgICAgICBwYXNzd29yZCA9IHJzdHVkaW9hcGk6OmFza0ZvclBhc3N3b3JkKFwiRGF0YWJhc2UgcGFzc3dvcmRcIikpXG5gYGAifQ== -->
-<pre class="r"><code>con &lt;- dbConnect(Postgres(),                 # Use the postgres driver
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuY29uIDwtIGRiQ29ubmVjdChQb3N0Z3JlcygpLCAgICAgICAgICAgICAgICAgIyBVc2UgdGhlIHBvc3RncmVzIGRyaXZlclxuICAgICAgICAgICAgICAgICBkYm5hbWUgPSAncHJlc2NyaWJlcnMnLCAgICAgIyBOYW1lIG9mIHRoZSBkYXRhYmFzZSB3ZSB3YW50IHRvIGNvbm5lY3QgdG9cbiAgICAgICAgICAgICAgICAgaG9zdCA9ICdsb2NhbGhvc3QnLCAgICAgICAgICMgJ2xvY2FsaG9zdCcgb3IgZWcuICdlYzItNTQtODMtMjAxLTk2LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tJ1xuICAgICAgICAgICAgICAgICBwb3J0ID0gNTQzMiwgXG4gICAgICAgICAgICAgICAgIHVzZXIgPSAncG9zdGdyZXMnLFxuICAgICAgICAgICAgICAgICBwYXNzd29yZCA9IHJzdHVkaW9hcGk6OmFza0ZvclBhc3N3b3JkKFxcRGF0YWJhc2UgcGFzc3dvcmRcXCkpXG5gYGBcbmBgYCJ9 -->
+<pre class="r"><code>```r
+con &lt;- dbConnect(Postgres(),                 # Use the postgres driver
                  dbname = &#39;prescribers&#39;,     # Name of the database we want to connect to
                  host = &#39;localhost&#39;,         # &#39;localhost&#39; or eg. &#39;ec2-54-83-201-96.compute-1.amazonaws.com&#39;
                  port = 5432, 
                  user = &#39;postgres&#39;,
-                 password = rstudioapi::askForPassword(&quot;Database password&quot;))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We can see the tables in the database.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGJMaXN0VGFibGVzKGNvbilcbmBgYCJ9 -->
-<pre class="r"><code>dbListTables(con)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiY2JzYVwiICAgICAgICAgICAgXCJkcnVnXCIgICAgICAgICAgICBcImZpcHNfY291bnR5XCIgICAgXG5bNF0gXCJvdmVyZG9zZV9kZWF0aHNcIiBcInBvcHVsYXRpb25cIiAgICAgIFwicHJlc2NyaWJlclwiICAgICBcbls3XSBcInByZXNjcmlwdGlvblwiICAgIFwiemlwX2ZpcHNcIiAgICAgICBcbiJ9 -->
-<pre><code>[1] &quot;cbsa&quot;            &quot;drug&quot;            &quot;fips_county&quot;    
-[4] &quot;overdose_deaths&quot; &quot;population&quot;      &quot;prescriber&quot;     
-[7] &quot;prescription&quot;    &quot;zip_fips&quot;       </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We can even see the columns of a particular table.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGJMaXN0RmllbGRzKGNvbiwgJ2RydWcnKVxuYGBgIn0= -->
-<pre class="r"><code>dbListFields(con, &#39;drug&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiZHJ1Z19uYW1lXCIgICAgICAgICAgICAgICAgICAgXG5bMl0gXCJnZW5lcmljX25hbWVcIiAgICAgICAgICAgICAgICBcblszXSBcIm9waW9pZF9kcnVnX2ZsYWdcIiAgICAgICAgICAgIFxuWzRdIFwibG9uZ19hY3Rpbmdfb3Bpb2lkX2RydWdfZmxhZ1wiXG5bNV0gXCJhbnRpYmlvdGljX2RydWdfZmxhZ1wiICAgICAgICBcbls2XSBcImFudGlwc3ljaG90aWNfZHJ1Z19mbGFnXCIgICAgIFxuIn0= -->
-<pre><code>[1] &quot;drug_name&quot;                   
-[2] &quot;generic_name&quot;                
-[3] &quot;opioid_drug_flag&quot;            
-[4] &quot;long_acting_opioid_drug_flag&quot;
-[5] &quot;antibiotic_drug_flag&quot;        
-[6] &quot;antipsychotic_drug_flag&quot;     </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>To execute a query, we can use the dbSendQuery function</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucXVlcnkgPSBcIlNFTEVDVCAqIEZST00gcHJlc2NyaWJlciBMSU1JVCAxMDA7XCJcblxucmVzIDwtIGRiU2VuZFF1ZXJ5KGNvbiwgcXVlcnkpXG5gYGAifQ== -->
-<pre class="r"><code>query = &quot;SELECT * FROM prescriber LIMIT 100;&quot;
+                 password = rstudioapi::askForPassword(\Database password\))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+We can see the tables in the database.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGJMaXN0VGFibGVzKGNvbilcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+dbListTables(con)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFxcY2JzYVxcICAgICAgICAgICAgXFxkcnVnXFwgICAgICAgICAgICBcXGZpcHNfY291bnR5XFwgICAgXG5bNF0gXFxvdmVyZG9zZV9kZWF0aHNcXCBcXHBvcHVsYXRpb25cXCAgICAgIFxccHJlc2NyaWJlclxcICAgICBcbls3XSBcXHByZXNjcmlwdGlvblxcICAgIFxcemlwX2ZpcHNcXCAgICAgICBcbiJ9 --&gt;
+</code></pre>
+<p>[1]     _county <br />
+[4] _deaths    <br />
+[7]   _fips </p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+We can even see the columns of a particular table.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGJMaXN0RmllbGRzKGNvbiwgJ2RydWcnKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+dbListFields(con, &#39;drug&#39;)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFxcZHJ1Z19uYW1lXFwgICAgICAgICAgICAgICAgICAgXG5bMl0gXFxnZW5lcmljX25hbWVcXCAgICAgICAgICAgICAgICBcblszXSBcXG9waW9pZF9kcnVnX2ZsYWdcXCAgICAgICAgICAgIFxuWzRdIFxcbG9uZ19hY3Rpbmdfb3Bpb2lkX2RydWdfZmxhZ1xcXG5bNV0gXFxhbnRpYmlvdGljX2RydWdfZmxhZ1xcICAgICAgICBcbls2XSBcXGFudGlwc3ljaG90aWNfZHJ1Z19mbGFnXFwgICAgIFxuIn0= --&gt;
+</code></pre>
+<p>[1] _name <br />
+[2] _name <br />
+[3] _drug_flag <br />
+[4] _acting_opioid_drug_flag<br />
+[5] _drug_flag <br />
+[6] _drug_flag </p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+To execute a query, we can use the dbSendQuery function
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucXVlcnkgPSBcXFNFTEVDVCAqIEZST00gcHJlc2NyaWJlciBMSU1JVCAxMDA7XFxcblxucmVzIDwtIGRiU2VuZFF1ZXJ5KGNvbiwgcXVlcnkpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+query = \SELECT * FROM prescriber LIMIT 100;\
 
 res &lt;- dbSendQuery(con, query)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Then to retrieve the results, we can use dbFetch. Note that you can
-fetch only a portion of the results if needed, but we’ll fetch
-everything.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJlc2NyaWJlcnMgPC0gZGJGZXRjaChyZXMpXG5cbiMgSXQgaXMgZ29vZCBwcmFjdGljZSB0byBjbGVhciB0aGUgcmVzdWx0IGFmdGVyIGZldGNoaW5nIHdoYXQgeW91IG5lZWQgaW4gb3JkZXIgdG8gZnJlZSBhbGwgcmVzb3VyY2VzIGFzc29jaWF0ZWQgd2l0aCB0aGUgcmVzdWx0IHNldC4gXG5kYkNsZWFyUmVzdWx0KHJlcylcbmBgYCJ9 -->
-<pre class="r"><code>prescribers &lt;- dbFetch(res)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Then to retrieve the results, we can use dbFetch. Note that you can fetch only a portion of the results if needed, but we&#39;ll fetch everything.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucHJlc2NyaWJlcnMgPC0gZGJGZXRjaChyZXMpXG5cbiMgSXQgaXMgZ29vZCBwcmFjdGljZSB0byBjbGVhciB0aGUgcmVzdWx0IGFmdGVyIGZldGNoaW5nIHdoYXQgeW91IG5lZWQgaW4gb3JkZXIgdG8gZnJlZSBhbGwgcmVzb3VyY2VzIGFzc29jaWF0ZWQgd2l0aCB0aGUgcmVzdWx0IHNldC4gXG5kYkNsZWFyUmVzdWx0KHJlcylcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+prescribers &lt;- dbFetch(res)
 
 # It is good practice to clear the result after fetching what you need in order to free all resources associated with the result set. 
 dbClearResult(res)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The results that are returned come through as a dataframe, so we can
-manipulate it using tidyverse.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJlc2NyaWJlcnMgJT4lIFxuICBmaWx0ZXIobnBwZXNfcHJvdmlkZXJfY2l0eSA9PSAnTkFTSFZJTExFJylcbmBgYCJ9 -->
-<pre class="r"><code>prescribers %&gt;% 
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+The results that are returned come through as a dataframe, so we can manipulate it using tidyverse.
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucHJlc2NyaWJlcnMgJT4lIFxuICBmaWx0ZXIobnBwZXNfcHJvdmlkZXJfY2l0eSA9PSAnTkFTSFZJTExFJylcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+prescribers %&gt;% 
   filter(nppes_provider_city == &#39;NASHVILLE&#39;)</code></pre>
+<p>```</p>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MTksIm5jb2wiOjE3LCJzdW1tYXJ5Ijp7IkRlc2NyaXB0aW9uIjpbImRmIFsxOSDDlyAxN10iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCdTFZUzQvYlZCUjJacExNWk9ocm1CWkVxVFQzQjh3RU81N01wSnZDdFgyRFBmRWpzcDJrV1kxTTRxWVdHU2R5bkVLN3FvVDRHZXhoeTI5Z3dZWVZZcytDZGdkc1dhREM5ZU02eVoxa09pMkRVQ1VzUlQ2UDczem4zSE5mVmt6cFByOTFmNHRobUhVbW44OHg2d1VzTW9XV1hkK3ZNVXgrRFNzNUpzK1VvdmZuR0xTRGhXMzh1NFovTy9DSFgrUmZzWURmdmErZXh1K2YyVVFmZlppOHYvUVQrM2VsUlAveDIwVC80ODlZZjFiNkp0YWY3WDZVNk1mdFJQKyttTHgvMmszc3Y5Mkw5ZWZYamVTOTgwVnNmMzV6TjlGdmZwM29sZCtaK0xrUjFaY1dYaEpVMkVDYVlhTFVrRGRzMjBqbFlnTXFGaktKQmtYRHNtR3FiWm90d1ZRK2xtMml5NGFxS2hMc0VyUU9iUm5xUkJQZ2ZUdGp5cmNWc1pIS0JVdkVHVk5sbzZFZ1U4K2lOb1NXWlNGVkpTbDAySURIaWtaSzJMQmtwTm9HUVJka0JjNllvQ0NvU3FadVdvWW9RN0doRUd3SHFhSk1GQVFscVVzMXBtQWFsa0thVWpRTkFaa1p0NmpDN2l6dmhvcWdDdldNK2hocXlDSWpWYnM2d1pXT1lSZGFzb2tJYThHR21rYjZsY2Y1TWdlRTVveGV4STFGS0ZQamZtV1ZGWkNwaU5tY05FMUZGNUZsWlU1TlVVbUNqWTZDSndocTJXenFrb2s2V1JLbzJLcVN0VEoyVWgzSmtTbkxIUk9CSk00UjFwd2NEZlF2L0JDRGVRWWlFS0Z6eGdXemFJb2xTOVFrZ2twRFJLcmM5YnBPd0htdExKV1h5R3VhOUhvSWFHYmM2N0NwTDRFVU5XbFBhOUxkS09LYTlnVnhxZmJ5RXQ2S3JIdWdLVWRPYW03cVozcXByWGJWTHlDOFh2aTUyYW1TbFRkQVdDejV0bzEwSFc4dmhBRGVhWmFoZzdwaGdvNmhaYnR6dDNMQXNxQ0p6eUZrUm43THh0dmRCbFpMc1JIZ1dEYUZYZWNxWEJWVU9Nc0dzSTBBMmErYi9DSExBYnRObHNRMS9nQ2plRk9LVVNUSDdRUWxJOURHMnhTWmdxTGFRTVNiVnlGeGQzQ21LcERNTXBES1FoblloaVNCWTZ3SmFqdGJWdHRuS3Iwdy9hMERqZ05heTZ6anNWbUNZUnFncVRUSWdYU2x3dDRGYW5ReEFKa2MzTyttOVFCSklNWEV0V1RkNEE2NXM5M1k0V284aTZsMDBlaENJTUF1WnNnYXczTXM2QUNreDYwaHpkZVFoQTlERlloSXg2TUNDR0pHeTJqWk1zN2F5VzZmdmJseHRYU2xqY2V2MkpnY05hRnA0Nm0wZ1ZFSE1aV2lvL05MZkRXcXhjWDBObCtyY2JqdHFJT3hGc0EzQ0RweitpMmVIcVZrR1ZXNHlzc0ExWlZNaXdHM0pkeEhGbEI5MHczVHBrK3VsTHA2bHl6aFRWdzVPS2hrUy9xT3RCOXg3UzBuU3pEdko1anpJT2ZUVU44dU9yNU8yL2hXUS84Ylh0bEFmZTN3UjVVRGZrNWg1eFcrc2twWkRXTnJGNEp4N0lVSUZtTU9YcjFRV2xrY2ZwNWxXWTdJbGFQYTRjeWVKVnZBY0ZXT1g3QXY3aGJzUHlRSjgveFJ0a255bFJwZlc4YkhWK2Z5ODlYYXJKYWpXVTYya3RsclIwY0h5L0NZa3FQcW1oL25tcTIva1JJMWlwYjFSa3JVK2E5UGc0a0xtb0hUQzczUUcvbHVRRHhHRUQ0Y2pkMisxd1BXTkJpNHdXTnlEWWxPMFBjYzJselMzV2t3R280R3hIQkZkdncrSFZ0M1RyM2g0elJoejMySmVYbW1jNHBlNmJsbmhkTys2NGZBODRIakF5TVlPTDczeE8wRDJYV0c0VU9BTTdrQTlhYzlKd3I3d0E0Y3ovZjhBYVlhRFFMbjlQdzZMNGY4dnh2V3R1S0hidUE3UTZCRjgrMzVsenV3ZjhwQ2ZiSmIvNXBnWDhCeUViQk5sMHlPa1J5NmJFRy90QlNML3lVVmZPZlVuYVRqMkU2TjYvN1lTOFU3L25qc1RrN0d3ZWlSMTNlRGs2RXpDVTlHd2VBa2lrc3g3MUdZQjE2QVFYT0FiUXB3NmkwNmVvRWJyUnZQR1U1U3h5MHFZdUQ2L1d3enBGRlJSUGo0cERmcWt6enZVRkdUTUhEZGtEdlhTMjdPSGNyYnc5d3JYRSs4Y1hXMWkxeVZOOCtrYzhKVmhmWkdVei9NenIxYms3SGJ3ODNBZyt1N2sxN2dqYVA5a2pwdnpKbE9IZ3lkQVptbzAyaEw0eDJHV1IvMUE5d2RmRWdQNDZ6VENUWHBwV0QwV1psTS9OWG93bmpLeE04T3ZUcDZlTDdKNmlER3JiNFRPdVVIUVRTL0RQT0NDdGtZeGFYaG9MWG9MOG9pRlp3TEtNUDFxUjlWMHQvdlBaejZuKzdmcGR6clkzOFE1WXhOeVhNMWxYZm01TzJraXJXLzB2QmlHbDUwL2NIc21Dc01uVS9jSVdIdXU0OVM4UnJ1Ujl5TzhqancvSkNNRTFzbjVYQVVPaVJrcXpjYUVrczhjdWJGM3dJUEF0cTNGUUFBIn0= -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjoiZGF0YS5mcmFtZSIsIm5yb3ciOjE5LCJuY29sIjoxNywic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6ImRmIFsxOSDDlyAxN10ifX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJ1MVlTNC9iVkJSMlpwTE1aT2hybUJaRXFUVDNCOHdFTzU3TXBKdkN0WDJEUGZFanNwMmtXWTFNNHFZV0dTZHluRUs3cW9UNEdleGh5Mjlnd1lZVllzK0NkZ2RzV2FEQzllTTZ5WjFrT2kyRFVDVXNSVDZQNzN6bjNITmZWa3pwUHI5MWY0dGhtSFVtbjg4eDZ3VXNNb1dXWGQrdk1VeCtEU3M1SnMrVW92Zm5HTFNEaFczOHU0Wi9PL0NIWCtSZnNZRGZ2YStleHUrZjJVUWZmWmk4di9RVCszZWxSUC94MjBULzQ4OVlmMWI2SnRhZjdYNlU2TWZ0UlArK21MeC8yazNzdjkyTDllZlhqZVM5ODBWc2YzNXpOOUZ2ZnAzb2xkK1orTGtSMVpjV1hoSlUyRUNhWWFMVWtEZHMyMGpsWWdNcUZqS0pCa1hEc21HcWJab3R3VlErbG0yaXk0YXFLaExzRXJRT2JSbnFSQlBnZlR0anlyY1ZzWkhLQlV2RUdWTmxvNkVnVTgraU5vU1daU0ZWSlNsMDJJREhpa1pLMkxCa3BOb0dRUmRrQmM2WW9DQ29TcVp1V29Zb1E3R2hFR3dIcWFKTUZBUWxxVXMxcG1BYWxrS2FValFOQVprWnQ2akM3aXp2aG9xZ0N2V00raGhxeUNJalZiczZ3WldPWVJkYXNva0lhOEdHbWtiNmxjZjVNZ2VFNW94ZXhJMUZLRlBqZm1XVkZaQ3BpTm1jTkUxRkY1RmxaVTVOVVVtQ2pZNkNKd2hxMld6cWtvazZXUktvMktxU3RUSjJVaDNKa1NuTEhST0JKTTRSMXB3Y0RmUXYvQkNEZVFZaUVLRnp4Z1d6YUlvbFM5UWtna3BEUktyYzlicE93SG10TEpXWHlHdWE5SG9JYUdiYzY3Q3BMNEVVTldsUGE5TGRLT0thOWdWeHFmYnlFdDZLckh1Z0tVZE9hbTdxWjNxcHJYYlZMeUM4WHZpNTJhbVNsVGRBV0N6NXRvMTBIVzh2aEFEZWFaYWhnN3BoZ282aFpidHp0M0xBc3FDSnp5RmtSbjdMeHR2ZEJsWkxzUkhnV0RhRlhlY3FYQlZVT01zR3NJMEEyYStiL0NITEFidE5sc1ExL2dDamVGT0tVU1RIN1FRbEk5REcyeFNaZ3FMYVFNU2JWeUZ4ZDNDbUtwRE1NcERLUWhuWWhpU0JZNndKYWp0YlZ0dG5LcjB3L2EwRGpnTmF5Nnpqc1ZtQ1lScWdxVFRJZ1hTbHd0NEZhblF4QUprYzNPK205UUJKSU1YRXRXVGQ0QTY1czkzWTRXbzhpNmwwMGVoQ0lNQXVac2dhdzNNczZBQ2t4NjBoemRlUWhBOURGWWhJeDZNQ0NHSkd5MmpaTXM3YXlXNmZ2Ymx4dFhTbGpjZXYySmdjTmFGcDQ2bTBnVkVITVpXaW8vTkxmRFdxeGNYME5sK3JjYmp0cUlPeEZzQTNDRHB6K2kyZUhxVmtHVlc0eXNzQTFaVk1pd0czSmR4SEZsQjkwdzNUcGsrdWxMcDZseXpoVFZ3NU9LaGtTL3FPdEI5eDdTMG5TekR2SjVqeklPZlRVTjh1T3I1TzIvaFdRLzhiWHRsQWZlM3dSNVVEZms1aDV4Vytza3BaRFdOckY0Sng3SVVJRm1NT1hyMVFXbGtjZnA1bFdZN0lsYVBhNGN5ZUpWdkFjRldPWDdBdjdoYnNQeVFKOC94UnRrbnlsUnBmVzhiSFYrZnk4OVhhckphaldVNjJrdGxyUjBjSHkvQ1lrcVBxbWgvbm1xMi9rUkkxaXBiMVJrclUrYTlQZzRrTG1vSFRDNzNRRy9sdVFEeEdFRDRjamQyKzF3UFdOQmk0d1dOeURZbE8wUGNjMmx6UzNXa3dHbzRHeEhCRmR2dytIVnQzVHIzaDR6Umh6MzJKZVhtbWM0cGU2YmxuaGRPKzY0ZkE4NEhqQXlNWU9MNzN4TzBEMlhXRzRVT0FNN2tBOWFjOUp3cjd3QTRjei9mOEFhWWFEUUxuOVB3Nkw0Zjh2eHZXdHVLSGJ1QTdRNkJGOCszNWx6dXdmOHBDZmJKYi81cGdYOEJ5RWJCTmwweU9rUnk2YkVHL3RCU0wveVVWZk9mVW5hVGoyRTZONi83WVM4VTcvbmpzVGs3R3dlaVIxM2VEazZFekNVOUd3ZUFraWtzeDcxR1lCMTZBUVhPQWJRcHc2aTA2ZW9FYnJSdlBHVTVTeHkwcVl1RDYvV3d6cEZGUlJQajRwRGZxa3p6dlVGR1RNSERka0R2WFMyN09IY3Jidzl3clhFKzhjWFcxaTF5Vk44K2tjOEpWaGZaR1V6L016cjFiazdIYnc4M0FnK3U3azE3Z2phUDlranB2ekpsT0hneWRBWm1vMDJoTDR4MkdXUi8xQTl3ZGZFZ1A0NnpUQ1RYcHBXRDBXWmxNL05Yb3duakt4TThPdlRwNmVMN0o2aURHcmI0VE91VUhRVFMvRFBPQ0N0a1l4YVhob0xYb0w4b2lGWndMS01QMXFSOVYwdC92UFp6Nm4rN2ZwZHpyWTM4UTVZeE55WE0xbFhmbTVPMmtpclcvMHZCaUdsNTAvY0hzbUNzTW5VL2NJV0h1dTQ5UzhScnVSOXlPOGpqdy9KQ01FMXNuNVhBVU9pUmtxemNhRWtzOGN1YkYzd0lQQXRxM0ZRQUEifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["npi"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["nppes_provider_last_org_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["nppes_provider_first_name"],"name":[3],"type":["chr"],"align":["left"]},{"label":["nppes_provider_mi"],"name":[4],"type":["chr"],"align":["left"]},{"label":["nppes_credentials"],"name":[5],"type":["chr"],"align":["left"]},{"label":["nppes_provider_gender"],"name":[6],"type":["chr"],"align":["left"]},{"label":["nppes_entity_code"],"name":[7],"type":["chr"],"align":["left"]},{"label":["nppes_provider_street1"],"name":[8],"type":["chr"],"align":["left"]},{"label":["nppes_provider_street2"],"name":[9],"type":["chr"],"align":["left"]},{"label":["nppes_provider_city"],"name":[10],"type":["chr"],"align":["left"]},{"label":["nppes_provider_zip5"],"name":[11],"type":["chr"],"align":["left"]},{"label":["nppes_provider_zip4"],"name":[12],"type":["chr"],"align":["left"]},{"label":["nppes_provider_state"],"name":[13],"type":["chr"],"align":["left"]},{"label":["nppes_provider_country"],"name":[14],"type":["chr"],"align":["left"]},{"label":["specialty_description"],"name":[15],"type":["chr"],"align":["left"]},{"label":["description_flag"],"name":[16],"type":["chr"],"align":["left"]},{"label":["medicare_prvdr_enroll_status"],"name":[17],"type":["chr"],"align":["left"]}],"data":[{"1":"1003000282","2":"BLAKEMORE","3":"ROSIE","4":"K","5":"FNP","6":"F","7":"I","8":"TENNESSEE PRISON FOR WOMEN","9":"3881 STEWARTS LANE","10":"NASHVILLE","11":"37243","12":"0001","13":"TN","14":"US","15":"Nurse Practitioner","16":"S","17":"N"},{"1":"1003013947","2":"OTTO","3":"ROBERT","4":"J","5":"M.D.","6":"M","7":"I","8":"2400 PATTERSON STREET SUITE 100","9":"NA","10":"NASHVILLE","11":"37203","12":"2786","13":"TN","14":"US","15":"Orthopedic Surgery","16":"S","17":"E"},{"1":"1003077728","2":"KAISER","3":"CLAYTON","4":"A","5":"M.D.","6":"M","7":"I","8":"1215 21ST AVE S","9":"NA","10":"NASHVILLE","11":"37232","12":"0014","13":"TN","14":"US","15":"Cardiac Surgery","16":"S","17":"E"},{"1":"1003019902","2":"ACOSTA","3":"LEALANI","4":"M","5":"MD","6":"F","7":"I","8":"3601 TVC","9":"NA","10":"NASHVILLE","11":"37232","12":"0001","13":"TN","14":"US","15":"Neurology","16":"S","17":"E"},{"1":"1003031261","2":"RUBRIGHT","3":"JAMES","4":"H","5":"M.D.","6":"M","7":"I","8":"345 23RD AVE N","9":"SUITE 212","10":"NASHVILLE","11":"37203","12":"1513","13":"TN","14":"US","15":"Hand Surgery","16":"S","17":"E"},{"1":"1003063314","2":"HOLLIDAY","3":"LYNN","4":"NA","5":"M.D.","6":"F","7":"I","8":"3601 THE VANDERBILT CLINIC","9":"NA","10":"NASHVILLE","11":"37232","12":"0001","13":"TN","14":"US","15":"Family Practice","16":"S","17":"E"},{"1":"1003071333","2":"NATHAN","3":"JAYASHREE","4":"R","5":"MD","6":"F","7":"I","8":"1005 DR. D.B. TODD JR. BLVD.","9":"NA","10":"NASHVILLE","11":"37208","12":"NA","13":"TN","14":"US","15":"Family Practice","16":"S","17":"E"},{"1":"1003090424","2":"BAXTER","3":"TAMMY","4":"M","5":"M.D.","6":"F","7":"I","8":"2400 PATTERSON ST","9":"SUITE 215","10":"NASHVILLE","11":"37203","12":"1562","13":"TN","14":"US","15":"Cardiac Surgery","16":"S","17":"E"},{"1":"1003098963","2":"VICK","3":"ROSE","4":"B","5":"ARNP","6":"F","7":"I","8":"3601 THE VANDERBILT CLINIC","9":"NA","10":"NASHVILLE","11":"37232","12":"3700","13":"TN","14":"US","15":"Nurse Practitioner","16":"S","17":"E"},{"1":"1003110016","2":"SCOTT","3":"AARON","4":"W","5":"APN","6":"M","7":"I","8":"411 MURFREESBORO PIKE","9":"NA","10":"NASHVILLE","11":"37210","12":"2838","13":"TN","14":"US","15":"Nurse Practitioner","16":"S","17":"E"},{"1":"1003132077","2":"KIERNAN","3":"COLLEEN","4":"M","5":"M.D.","6":"F","7":"I","8":"209 LIGHT HL","9":"NA","10":"NASHVILLE","11":"37232","12":"0001","13":"TN","14":"US","15":"Student in an Organized Health Care Education/Training Program","16":"T","17":"N"},{"1":"1003196429","2":"BUSSELL","3":"SCOTTIE","4":"A","5":"MD,MPH","6":"M","7":"I","8":"1005 DR DB TODD JR BLVD","9":"NA","10":"NASHVILLE","11":"37208","12":"3501","13":"TN","14":"US","15":"Family Practice","16":"S","17":"N"},{"1":"1003203134","2":"NAKAJIMA","3":"ERICA","4":"NA","5":"NA","6":"F","7":"I","8":"1161 21ST AVE S","9":"D3100 MEDICAL CENTER NORTH","10":"NASHVILLE","11":"37232","12":"2358","13":"TN","14":"US","15":"Student in an Organized Health Care Education/Training Program","16":"T","17":"E"},{"1":"1003215997","2":"SHELTON","3":"PRINCESS","4":"NA","5":"FNP-BC","6":"F","7":"I","8":"1830 LINCOYA BAY DR","9":"NA","10":"NASHVILLE","11":"37214","12":"2771","13":"TN","14":"US","15":"Nurse Practitioner","16":"S","17":"E"},{"1":"1003232927","2":"HIATT","3":"EMILY","4":"A","5":"FNP-BC","6":"F","7":"I","8":"3310 W END AVE","9":"SUITE 590","10":"NASHVILLE","11":"37203","12":"1028","13":"TN","14":"US","15":"Nurse Practitioner","16":"S","17":"E"},{"1":"1003235078","2":"ABBLITT","3":"WILLIAM","4":"P","5":"M.D.","6":"M","7":"I","8":"MEDICAL CENTER EAST SOUTH TOWER","9":"STE 4200","10":"NASHVILLE","11":"37232","12":"8774","13":"TN","14":"US","15":"Student in an Organized Health Care Education/Training Program","16":"T","17":"E"},{"1":"1003235391","2":"SOCHACKI","3":"ANDREW","4":"L","5":"M.D.","6":"M","7":"I","8":"VANDERBILT UNIVERSITY DEPARTMENT OF MEDICINE","9":"D-3100, MEDICAL CENTER NORTH","10":"NASHVILLE","11":"37232","12":"2358","13":"TN","14":"US","15":"Internal Medicine","16":"S","17":"E"},{"1":"1003235664","2":"WELCH","3":"CAITLIN","4":"NA","5":"MD","6":"F","7":"I","8":"1161 21ST AVE S","9":"D-3100 MEDICAL CENTER NORTH","10":"NASHVILLE","11":"37232","12":"0011","13":"TN","14":"US","15":"Student in an Organized Health Care Education/Training Program","16":"T","17":"E"},{"1":"1003251166","2":"EADDY","3":"ANDRE","4":"C","5":"M.D., PH.D.","6":"M","7":"I","8":"VANDERBILT UNIVERSITY DEPARTMENT OF MEDICINE","9":"D-3100, MEDICAL CENTER NORTH","10":"NASHVILLE","11":"37232","12":"0001","13":"TN","14":"US","15":"Student in an Organized Health Care Education/Training Program","16":"T","17":"E"}],"options":{"columns":{"min":{},"max":[10],"total":[17]},"rows":{"min":[10],"max":[10],"total":[19]},"pages":{}}}
@@ -1870,7 +1944,7 @@ manipulate it using tidyverse.</p>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlVzaW5nIFBvc3RncmUgd2l0aCBSIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KRmlyc3QsIHdlIG5lZWQgdG8gZXN0YWJsaXNoIGEgY29ubmVjdGlvbiB3aXRoIG91ciBkYXRhYmFzZS4gRm9yIHRoaXMsIHdlIHdpbGwgdXNlIHRoZSBSUG9zdGdyZXMgYW5kIERCSSBsaWJyYXJpZXMuDQoNCklmIHlvdSBhcmUgd29ya2luZyB3aXRoIGEgbGFyZ2UgZGF0YWJhc2UsIHlvdSBtaWdodCBjb25zaWRlciB1c2luZyB0aGUgZGJwbHlyIGxpYnJhcnkgKGh0dHBzOi8vZGJwbHlyLnRpZHl2ZXJzZS5vcmcvYXJ0aWNsZXMvZGJwbHlyLmh0bWwpLCB3aGljaCBhbGxvd3MgeW91IHRvIHVzZSBkcGx5ciB2ZXJicyB0byBpbnRlcmFjdCB3aXRoIHRhYmxlcyBpbiBhIGRhdGFiYXNlLCBidXQgYWN0dWFsbHkgZXhlY3V0ZSB0aGVtIGluIHRoZSBkYXRhYmFzZS4NCg0KYGBge3J9DQpsaWJyYXJ5KERCSSkNCmxpYnJhcnkoUlBvc3RncmVzKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpgYGANCg0KTm93LCB3ZSdsbCBjcmVhdGUgb3VyIGNvbm5lY3Rpb24uDQpgYGB7cn0NCmNvbiA8LSBkYkNvbm5lY3QoUG9zdGdyZXMoKSwgICAgICAgICAgICAgICAgICMgVXNlIHRoZSBwb3N0Z3JlcyBkcml2ZXINCiAgICAgICAgICAgICAgICAgZGJuYW1lID0gJ21ldGFsd29ya2luZ3NvbHV0aW9ucycsICAgICAjIE5hbWUgb2YgdGhlIGRhdGFiYXNlIHdlIHdhbnQgdG8gY29ubmVjdCB0bw0KICAgICAgICAgICAgICAgICBob3N0ID0gJ2xvY2FsaG9zdCcsICAgICAgICAgIyAnbG9jYWxob3N0JyBvciBlZy4gJ2VjMi01NC04My0yMDEtOTYuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20nDQogICAgICAgICAgICAgICAgIHBvcnQgPSA1NDMyLCANCiAgICAgICAgICAgICAgICAgdXNlciA9ICdwb3N0Z3JlcycsDQogICAgICAgICAgICAgICAgIHBhc3N3b3JkID0gcnN0dWRpb2FwaTo6YXNrRm9yUGFzc3dvcmQoIkRhdGFiYXNlIHBhc3N3b3JkIikpDQpgYGANCg0KV2UgY2FuIHNlZSB0aGUgdGFibGVzIGluIHRoZSBkYXRhYmFzZS4NCmBgYHtyfQ0KZGJMaXN0VGFibGVzKGNvbikNCmBgYA0KDQpXZSBjYW4gZXZlbiBzZWUgdGhlIGNvbHVtbnMgb2YgYSBwYXJ0aWN1bGFyIHRhYmxlLg0KYGBge3J9DQpkYkxpc3RGaWVsZHMoY29uLCAncGFydHMnKQ0KYGBgDQoNClRvIGV4ZWN1dGUgYSBxdWVyeSwgd2UgY2FuIHVzZSB0aGUgZGJTZW5kUXVlcnkgZnVuY3Rpb24NCmBgYHtyfQ0KcXVlcnkgPSAiV0lUSCBwYXJ0c19qb2JzIEFTKA0KU0VMRUNUDQoJaW1wX3Nob3J0X2Rlc2NyaXB0aW9uDQoJLGptcF9wYXJ0X2lkDQoJLENPVU5UKGptcF9qb2JfaWQpIEFTIG5fb2Zfam9icw0KRlJPTSBqb2JzIGENCkZVTEwgSk9JTiBwYXJ0cyBiDQoJT04gYS5qbXBfcGFydF9pZCA9IGIuaW1wX3BhcnRfaWQNCglHUk9VUCBCWSAxLDIpLA0Kam9iX29wc19jb3VudCBBUygNClNFTEVDVCANCglqbW9fam9iX2lkDQoJLFNVTShhLmptb19hY3R1YWxfcHJvZHVjdGlvbl9ob3VycykgQVMgdHdlbnR5X2ZvdXINCgksU1VNKGIuam1vX2FjdHVhbF9wcm9kdWN0aW9uX2hvdXJzKSBBUyB0d2VudHlfdGhyZWUNCgksKFNVTShhLmptb19hY3R1YWxfcHJvZHVjdGlvbl9ob3VycykgKyBTVU0oYi5qbW9fYWN0dWFsX3Byb2R1Y3Rpb25faG91cnMpKSBBUyB0b3RhbF9ob3Vycw0KRlJPTSBqb2Jfb3BlcmF0aW9uc18yMDI0IGENCkZVTEwgSk9JTiBqb2Jfb3BlcmF0aW9uc18yMDIzIGINCglVU0lORyhqbW9fam9iX2lkKQ0KR1JPVVAgQlkgam1vX2pvYl9pZA0KT1JERVIgQlkgdHdlbnR5X2ZvdXIgREVTQw0KKSwNCmZ1bGxfaG91cnMgQVMoDQpTRUxFQ1QNCglqbW9fam9iX2lkDQoJLENPQUxFU0NFKHRvdGFsX2hvdXJzLCB0d2VudHlfdGhyZWUsIHR3ZW50eV9mb3VyKSBBUyBob3Vycw0KRlJPTSBqb2Jfb3BzX2NvdW50DQpPUkRFUiBCWSAyIERFU0MNCiksDQpqb2luX2N0ZSBBUygNClNFTEVDVA0KCWptb19qb2JfaWQNCgksaG91cnMNCgksYi5qbXBfcGFydF9pZA0KCSxjLmltcF9zaG9ydF9kZXNjcmlwdGlvbg0KCSxuX29mX2pvYnMNCkZST00gZnVsbF9ob3VycyBhDQpKT0lOIGpvYnMgYg0KCU9OIGEuam1vX2pvYl9pZCA9IGIuam1wX2pvYl9pZA0KSk9JTiBwYXJ0cyBjDQoJT04gYi5qbXBfcGFydF9pZCA9IGMuaW1wX3BhcnRfaWQNCkpPSU4gcGFydHNfam9icyBkDQoJT04gYy5pbXBfcGFydF9pZCA9IGQuam1wX3BhcnRfaWQNCk9SREVSIEJZIDIgREVTQykNClNFTEVDVCANCglpbXBfc2hvcnRfZGVzY3JpcHRpb24NCgksam1wX3BhcnRfaWQNCgksU1VNKGhvdXJzKSBBUyBwcm9kdWN0aW9uX2hvdXJzDQoJLG5fb2Zfam9icw0KRlJPTSBqb2luX2N0ZQ0KR1JPVVAgQlkgaW1wX3Nob3J0X2Rlc2NyaXB0aW9uLCBqbXBfcGFydF9pZCwgbl9vZl9qb2JzDQpPUkRFUiBCWSAzIERFU0M7Ig0KDQpyZXMgPC0gZGJTZW5kUXVlcnkoY29uLCBxdWVyeSkNCmBgYA0KDQpUaGVuIHRvIHJldHJpZXZlIHRoZSByZXN1bHRzLCB3ZSBjYW4gdXNlIGRiRmV0Y2guIE5vdGUgdGhhdCB5b3UgY2FuIGZldGNoIG9ubHkgYSBwb3J0aW9uIG9mIHRoZSByZXN1bHRzIGlmIG5lZWRlZCwgYnV0IHdlJ2xsIGZldGNoIGV2ZXJ5dGhpbmcuDQpgYGB7cn0NCnBhcnRzX3Byb2R1Y3Rpb24gPC0gZGJGZXRjaChyZXMpDQoNCiMgSXQgaXMgZ29vZCBwcmFjdGljZSB0byBjbGVhciB0aGUgcmVzdWx0IGFmdGVyIGZldGNoaW5nIHdoYXQgeW91IG5lZWQgaW4gb3JkZXIgdG8gZnJlZSBhbGwgcmVzb3VyY2VzIGFzc29jaWF0ZWQgd2l0aCB0aGUgcmVzdWx0IHNldC4gDQpkYkNsZWFyUmVzdWx0KHJlcykNCmBgYA0KDQpUaGUgcmVzdWx0cyB0aGF0IGFyZSByZXR1cm5lZCBjb21lIHRocm91Z2ggYXMgYSBkYXRhZnJhbWUsIHNvIHdlIGNhbiBtYW5pcHVsYXRlIGl0IHVzaW5nIHRpZHl2ZXJzZS4NCmBgYHtyfQ0KcGFydHNfcHJvZHVjdGlvbiAlPiUgDQogIGZpbHRlcihuX29mX2pvYnMgPiA1MCkNCmBgYA==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlVzaW5nIFBvc3RncmUgd2l0aCBSIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KRmlyc3QsIHdlIG5lZWQgdG8gZXN0YWJsaXNoIGEgY29ubmVjdGlvbiB3aXRoIG91ciBkYXRhYmFzZS4gRm9yIHRoaXMsIHdlIHdpbGwgdXNlIHRoZSBSUG9zdGdyZXMgYW5kIERCSSBsaWJyYXJpZXMuDQoNCklmIHlvdSBhcmUgd29ya2luZyB3aXRoIGEgbGFyZ2UgZGF0YWJhc2UsIHlvdSBtaWdodCBjb25zaWRlciB1c2luZyB0aGUgZGJwbHlyIGxpYnJhcnkgKGh0dHBzOi8vZGJwbHlyLnRpZHl2ZXJzZS5vcmcvYXJ0aWNsZXMvZGJwbHlyLmh0bWwpLCB3aGljaCBhbGxvd3MgeW91IHRvIHVzZSBkcGx5ciB2ZXJicyB0byBpbnRlcmFjdCB3aXRoIHRhYmxlcyBpbiBhIGRhdGFiYXNlLCBidXQgYWN0dWFsbHkgZXhlY3V0ZSB0aGVtIGluIHRoZSBkYXRhYmFzZS4NCg0KYGBge3J9DQpsaWJyYXJ5KERCSSkNCmxpYnJhcnkoUlBvc3RncmVzKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpgYGANCg0KYGBge3J9DQpjb21wbGV0ZV9kYXRhIDwtIHJlYWRfY3N2KCcuLi9kYXRhL2NvbXBsZXRlZF90YWJsZS5jc3YnKQ0KYGBgDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KTm93LCB3ZSdsbCBjcmVhdGUgb3VyIGNvbm5lY3Rpb24uDQpgYGB7cn0NCmNvbiA8LSBkYkNvbm5lY3QoUG9zdGdyZXMoKSwgICAgICAgICAgICAgICAgICMgVXNlIHRoZSBwb3N0Z3JlcyBkcml2ZXINCiAgICAgICAgICAgICAgICAgZGJuYW1lID0gJ21ldGFsd29ya2luZ3NvbHV0aW9ucycsICAgICAjIE5hbWUgb2YgdGhlIGRhdGFiYXNlIHdlIHdhbnQgdG8gY29ubmVjdCB0bw0KICAgICAgICAgICAgICAgICBob3N0ID0gJ2xvY2FsaG9zdCcsICAgICAgICAgIyAnbG9jYWxob3N0JyBvciBlZy4gJ2VjMi01NC04My0yMDEtOTYuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20nDQogICAgICAgICAgICAgICAgIHBvcnQgPSA1NDMyLCANCiAgICAgICAgICAgICAgICAgdXNlciA9ICdwb3N0Z3JlcycsDQogICAgICAgICAgICAgICAgIHBhc3N3b3JkID0gcnN0dWRpb2FwaTo6YXNrRm9yUGFzc3dvcmQoIkRhdGFiYXNlIHBhc3N3b3JkIikpDQpgYGANCg0KV2UgY2FuIHNlZSB0aGUgdGFibGVzIGluIHRoZSBkYXRhYmFzZS4NCmBgYHtyfQ0KZGJMaXN0VGFibGVzKGNvbikNCmBgYA0KDQpXZSBjYW4gZXZlbiBzZWUgdGhlIGNvbHVtbnMgb2YgYSBwYXJ0aWN1bGFyIHRhYmxlLg0KYGBge3J9DQpkYkxpc3RGaWVsZHMoY29uLCAncGFydHMnKQ0KYGBgDQoNClRvIGV4ZWN1dGUgYSBxdWVyeSwgd2UgY2FuIHVzZSB0aGUgZGJTZW5kUXVlcnkgZnVuY3Rpb24NCmBgYHtyfQ0KcXVlcnkgPSAiV0lUSCBwYXJ0c19qb2JzIEFTKA0KU0VMRUNUDQoJaW1wX3Nob3J0X2Rlc2NyaXB0aW9uDQoJLGptcF9wYXJ0X2lkDQoJLENPVU5UKGptcF9qb2JfaWQpIEFTIG5fb2Zfam9icw0KRlJPTSBqb2JzIGENCkZVTEwgSk9JTiBwYXJ0cyBiDQoJT04gYS5qbXBfcGFydF9pZCA9IGIuaW1wX3BhcnRfaWQNCglHUk9VUCBCWSAxLDIpLA0Kam9iX29wc19jb3VudCBBUygNClNFTEVDVCANCglqbW9fam9iX2lkDQoJLFNVTShhLmptb19hY3R1YWxfcHJvZHVjdGlvbl9ob3VycykgQVMgdHdlbnR5X2ZvdXINCgksU1VNKGIuam1vX2FjdHVhbF9wcm9kdWN0aW9uX2hvdXJzKSBBUyB0d2VudHlfdGhyZWUNCgksKFNVTShhLmptb19hY3R1YWxfcHJvZHVjdGlvbl9ob3VycykgKyBTVU0oYi5qbW9fYWN0dWFsX3Byb2R1Y3Rpb25faG91cnMpKSBBUyB0b3RhbF9ob3Vycw0KRlJPTSBqb2Jfb3BlcmF0aW9uc18yMDI0IGENCkZVTEwgSk9JTiBqb2Jfb3BlcmF0aW9uc18yMDIzIGINCglVU0lORyhqbW9fam9iX2lkKQ0KR1JPVVAgQlkgam1vX2pvYl9pZA0KT1JERVIgQlkgdHdlbnR5X2ZvdXIgREVTQw0KKSwNCmZ1bGxfaG91cnMgQVMoDQpTRUxFQ1QNCglqbW9fam9iX2lkDQoJLENPQUxFU0NFKHRvdGFsX2hvdXJzLCB0d2VudHlfdGhyZWUsIHR3ZW50eV9mb3VyKSBBUyBob3Vycw0KRlJPTSBqb2Jfb3BzX2NvdW50DQpPUkRFUiBCWSAyIERFU0MNCiksDQpqb2luX2N0ZSBBUygNClNFTEVDVA0KCWptb19qb2JfaWQNCgksaG91cnMNCgksYi5qbXBfcGFydF9pZA0KCSxjLmltcF9zaG9ydF9kZXNjcmlwdGlvbg0KCSxuX29mX2pvYnMNCkZST00gZnVsbF9ob3VycyBhDQpKT0lOIGpvYnMgYg0KCU9OIGEuam1vX2pvYl9pZCA9IGIuam1wX2pvYl9pZA0KSk9JTiBwYXJ0cyBjDQoJT04gYi5qbXBfcGFydF9pZCA9IGMuaW1wX3BhcnRfaWQNCkpPSU4gcGFydHNfam9icyBkDQoJT04gYy5pbXBfcGFydF9pZCA9IGQuam1wX3BhcnRfaWQNCk9SREVSIEJZIDIgREVTQykNClNFTEVDVCANCglpbXBfc2hvcnRfZGVzY3JpcHRpb24NCgksam1wX3BhcnRfaWQNCgksU1VNKGhvdXJzKSBBUyBwcm9kdWN0aW9uX2hvdXJzDQoJLG5fb2Zfam9icw0KRlJPTSBqb2luX2N0ZQ0KR1JPVVAgQlkgaW1wX3Nob3J0X2Rlc2NyaXB0aW9uLCBqbXBfcGFydF9pZCwgbl9vZl9qb2JzDQpPUkRFUiBCWSAzIERFU0M7Ig0KDQpyZXMgPC0gZGJTZW5kUXVlcnkoY29uLCBxdWVyeSkNCmBgYA0KDQpUaGVuIHRvIHJldHJpZXZlIHRoZSByZXN1bHRzLCB3ZSBjYW4gdXNlIGRiRmV0Y2guIE5vdGUgdGhhdCB5b3UgY2FuIGZldGNoIG9ubHkgYSBwb3J0aW9uIG9mIHRoZSByZXN1bHRzIGlmIG5lZWRlZCwgYnV0IHdlJ2xsIGZldGNoIGV2ZXJ5dGhpbmcuDQpgYGB7cn0NCnBhcnRzX3Byb2R1Y3Rpb24gPC0gZGJGZXRjaChyZXMpDQoNCiMgSXQgaXMgZ29vZCBwcmFjdGljZSB0byBjbGVhciB0aGUgcmVzdWx0IGFmdGVyIGZldGNoaW5nIHdoYXQgeW91IG5lZWQgaW4gb3JkZXIgdG8gZnJlZSBhbGwgcmVzb3VyY2VzIGFzc29jaWF0ZWQgd2l0aCB0aGUgcmVzdWx0IHNldC4gDQpkYkNsZWFyUmVzdWx0KHJlcykNCmBgYA0KDQpUaGUgcmVzdWx0cyB0aGF0IGFyZSByZXR1cm5lZCBjb21lIHRocm91Z2ggYXMgYSBkYXRhZnJhbWUsIHNvIHdlIGNhbiBtYW5pcHVsYXRlIGl0IHVzaW5nIHRpZHl2ZXJzZS4NCmBgYHtyfQ0KcGFydHNfcHJvZHVjdGlvbiAlPiUgDQogIGZpbHRlcihuX29mX2pvYnMgPiA1MCkNCmBgYA==</div>
 
 
 

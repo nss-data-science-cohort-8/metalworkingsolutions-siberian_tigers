@@ -13,6 +13,20 @@ library(RPostgres)
 library(tidyverse)
 ```
 
+```{r}
+complete_data <- read_csv('../data/completed_table.csv')
+```
+
+
+
+
+
+
+
+
+
+
+
 Now, we'll create our connection.
 ```{r}
 con <- dbConnect(Postgres(),                 # Use the postgres driver
