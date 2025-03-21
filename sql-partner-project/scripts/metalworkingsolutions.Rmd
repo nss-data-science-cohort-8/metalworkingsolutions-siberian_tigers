@@ -11,6 +11,8 @@ If you are working with a large database, you might consider using the dbplyr li
 library(DBI)
 library(RPostgres)
 library(tidyverse)
+library(plotly)
+library(forcats)
 options(scipen=999)
 ```
 
@@ -69,11 +71,69 @@ rev_hours |>
 ```
 
 
+```{r}
+complete_data <- read_csv('../data/completed_table.csv')
+
+parts_table_top_10 <- complete_data |> 
+  group_by(part_id) |> 
+  summarize(jobs = min(number_of_jobs_by_part),
+            estimated_hours = sum(estimated_production_hours),
+            revenue = sum(total_revenue),
+            estimated_job_per_hour = (sum(estimated_production_hours) / min(number_of_jobs_by_part)),             estimated_revenue_per_job = sum(total_revenue) / min(number_of_jobs_by_part),
+            revenue_per_hour = mean(estimated_revenue_per_hour)) |> 
+  arrange(desc(jobs)) |> 
+  head(10) 
+
+parts_table_top_10
+```
+
+
+```{r}
+sf <- max(parts_table$jobs)/max(parts_table$estimated_hours)
+
+parts_longer <- parts_table_top_10 |> 
+  mutate(estimated_hours = estimated_hours*sf) |> 
+  pivot_longer(names_to = 'y_new', values_to = 'val', jobs:estimated_hours)
+
+subset_to_order <- parts_longer |> 
+  filter(y_new == 'jobs')
+subset_to_order$part_id = fct_reorder(subset_to_order$part_id, -subset_to_order$val)
+parts_longer$part_id = factor(parts_longer$part_id, levels = levels(subset_to_order$part_id))
+  
+ggplot(parts_longer, aes(x=part_id)) +
+  geom_col(aes(y = val, fill = y_new, group = y_new), position=position_dodge(),
+            color="black", alpha=.6)  +
+  scale_fill_manual(values = c("red", "blue")) +
+  scale_y_continuous(name = "number of jobs",labels = scales::comma,sec.axis = sec_axis(~./sf, name="estimated production hours",
+                                                     labels = scales::comma))+
+  labs(fill='variable')+
+  theme_bw()+
+  theme(legend.position = 'top',
+        plot.title = element_text(color='black',face='bold',hjust=0.5),
+        axis.text = element_text(color='black',face='bold'),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title.y.right = element_text(color='red',face='bold'),
+        axis.title.y.left = element_text(color='blue',face='bold'),
+        legend.text = element_text(color='black',face='bold'),
+        legend.title = element_text(color='black',face='bold'))+
+  ggtitle('My barplot')
+```
 
 
 
+```{r}
+data_long <- parts_table %>%
+  pivot_longer(cols = c("jobs", "estimated_hours"), names_to = "variable", values_to = "value")
 
-
+# Create the plot with secondary axis
+ggplot(data_long, aes(x = part_id, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(
+    sec.axis = sec_axis(~ . * .001, name = "Value 2 (scaled)")
+  ) +
+  labs(x = "Category", y = "Value 1", fill = "") +
+  theme_bw()
+```
 
 
 
