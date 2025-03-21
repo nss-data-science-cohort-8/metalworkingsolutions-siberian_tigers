@@ -5,17 +5,78 @@ output: html_notebook
 
 First, we need to establish a connection with our database. For this, we will use the RPostgres and DBI libraries.
 
-If you are working with a large database, you might consider using the dbplyr library (https://dbplyr.tidyverse.org/articles/dbplyr.html), which allows you to use dplyr verbs to interact with tables in a database, but actually execute them in the database.
+If you are working with a large database, you might consider using the dbplyr library (<https://dbplyr.tidyverse.org/articles/dbplyr.html>), which allows you to use dplyr verbs to interact with tables in a database, but actually execute them in the database.
 
 ```{r}
 library(DBI)
 library(RPostgres)
 library(tidyverse)
+options(scipen=999)
 ```
 
 ```{r}
 complete_data <- read_csv('../data/completed_table.csv')
 ```
+
+```{r}
+complete_data |> 
+  mutate(prod = mean(estimated_production_hours)) |> 
+  mutate(rev = mean(estimated_revenue_per_hour)) |> 
+  mutate(total = mean(total_revenue)) |> 
+  select(prod, rev, total) |> 
+  head(1)
+```
+
+```{r}
+complete_data |>
+ arrange(desc(job_id))
+```
+
+```{r}
+jobs_hours <- complete_data |> 
+  group_by(part_id, job_id) |> 
+  summarize(jobs = min(number_of_jobs_by_part),
+            hours = mean(estimated_production_hours)) |> 
+  arrange(desc(job_id))
+
+jobs_hours |> 
+  head(5)
+```
+
+
+```{r}
+jobs_hours |> 
+  ggplot(aes(x=hours, y=jobs)) +
+  geom_line()
+```
+
+
+
+```{r}
+rev_hours <- complete_data |> 
+  group_by(part_id) |> 
+  summarize(hours = mean(estimated_production_hours), revenue = mean(total_revenue)) |> 
+  arrange(desc(hours))
+
+rev_hours |> 
+  head(5)
+```
+
+```{r}
+rev_hours |> 
+  ggplot(aes(x=hours, y=revenue)) +
+  geom_line()
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -28,6 +89,7 @@ complete_data <- read_csv('../data/completed_table.csv')
 
 
 Now, we'll create our connection.
+
 ```{r}
 con <- dbConnect(Postgres(),                 # Use the postgres driver
                  dbname = 'metalworkingsolutions',     # Name of the database we want to connect to
@@ -38,16 +100,19 @@ con <- dbConnect(Postgres(),                 # Use the postgres driver
 ```
 
 We can see the tables in the database.
+
 ```{r}
 dbListTables(con)
 ```
 
 We can even see the columns of a particular table.
+
 ```{r}
 dbListFields(con, 'parts')
 ```
 
 To execute a query, we can use the dbSendQuery function
+
 ```{r}
 query = "WITH parts_jobs AS(
 SELECT
@@ -105,6 +170,7 @@ res <- dbSendQuery(con, query)
 ```
 
 Then to retrieve the results, we can use dbFetch. Note that you can fetch only a portion of the results if needed, but we'll fetch everything.
+
 ```{r}
 parts_production <- dbFetch(res)
 
@@ -113,6 +179,7 @@ dbClearResult(res)
 ```
 
 The results that are returned come through as a dataframe, so we can manipulate it using tidyverse.
+
 ```{r}
 parts_production %>% 
   filter(n_of_jobs > 50)

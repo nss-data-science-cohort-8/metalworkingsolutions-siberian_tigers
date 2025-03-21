@@ -107,26 +107,29 @@ SELECT
 	jmo_job_id
 	,SUM(a.jmo_estimated_production_hours) AS twenty_four
 	,SUM(b.jmo_estimated_production_hours) AS twenty_three
-	,(SUM(a.jmo_estimated_production_hours) + SUM(b.jmo_estimated_production_hours)) AS total_hours
+	,(SUM(a.jmo_estimated_production_hours) + SUM(b.jmo_estimated_production_hours)) AS total_estimated_hours
+	,SUM(a.jmo_completed_production_hours) AS four_complete
+	,SUM(b.jmo_completed_production_hours) AS three_complete
+	,(SUM(a.jmo_completed_production_hours) + SUM(b.jmo_completed_production_hours)) AS total_complete_hours
 FROM job_operations_2024 a
 FULL JOIN job_operations_2023 b
 	USING(jmo_job_id)
 GROUP BY jmo_job_id
-ORDER BY twenty_four DESC
 ),
 full_hours AS(
 SELECT
 	jmo_job_id
-	,COALESCE(total_hours, twenty_three, twenty_four) AS hours
+	,COALESCE(total_estimated_hours, twenty_three, twenty_four) AS estimated_hours
+	,COALESCE(total_complete_hours, four_complete, three_complete) AS completed_hours
 FROM job_ops_count
-ORDER BY 2 DESC
 ),
 join_cte AS(
 SELECT
 	b.jmp_created_date
 	,c.imp_created_date
 	,jmo_job_id
-	,hours
+	,a.estimated_hours
+	,a.completed_hours
 	,b.jmp_part_id
 	,c.imp_long_description_text
 	,n_of_jobs
@@ -140,21 +143,20 @@ JOIN parts c
 	ON b.jmp_part_id = c.imp_part_id
 JOIN parts_jobs d
 	ON c.imp_part_id = d.jmp_part_id
-ORDER BY 2 DESC),
+),
 join_2 AS( 
 SELECT
 	jmp_created_date
 	,jmo_job_id
 	,imp_long_description_text
 	,jmp_part_id
-	,SUM(hours) AS production_hours
 	,n_of_jobs
 	,jmp_closed_date
 	,jmp_production_due_date
 	,jmp_order_quantity
+	,estimated_hours AS estimated_production_hours
+	,completed_hours AS completed_production_hours
 FROM join_cte
-GROUP BY 1,2,3,4,6,7,8,9
-ORDER BY 3 DESC
 ), 
 revenue_cte AS (
 SELECT
@@ -165,38 +167,45 @@ SELECT
 	MAX(sml_created_date) AS created_shipment
 FROM shipment_lines
 GROUP BY 1,2,3
-)
+),
+another_cte AS (
 SELECT
 	c.imp_created_date AS part_created,
 	a.jmp_created_date AS job_created,
 	a.jmp_closed_date AS job_finished,
 	b.created_shipment,
 	a.jmp_production_due_date AS job_due_date,
+	a.estimated_production_hours,
+	a.completed_production_hours,
   a.imp_long_description_text AS part_name,
   a.jmp_part_id AS part_id,
   b.sml_job_id AS job_id,
   b.sml_shipment_id,
-  a.production_hours,
   a.n_of_jobs AS number_of_jobs_by_part,
-  CASE
-    WHEN a.production_hours = 0 THEN a.production_hours + a.n_of_jobs 
-    ELSE a.production_hours
-  END AS hours_used_for_rev,
   COALESCE(b.revenue, 0) AS total_revenue,
   CASE
-    WHEN a.production_hours = 0 THEN COALESCE(b.revenue, 0) / (a.production_hours+ a.n_of_jobs)
-	WHEN a.production_hours < 1 THEN COALESCE(b.revenue, 0) * a.production_hours
-    ELSE COALESCE(b.revenue, 0) / a.production_hours
-  END AS revenue_per_hour,
+	WHEN a.completed_production_hours = 0 THEN 0
+	WHEN a.completed_production_hours < 1 THEN COALESCE(b.revenue, 0) * a.completed_production_hours
+	ELSE COALESCE(b.revenue, 0) / a.completed_production_hours
+	END AS completed_revenue_per_hour,
+  CASE
+	WHEN a.estimated_production_hours = 0 THEN 0
+	WHEN a.estimated_production_hours < 1 THEN COALESCE(b.revenue, 0) * a.estimated_production_hours
+	ELSE COALESCE(b.revenue, 0) / a.estimated_production_hours
+	END AS estimated_revenue_per_hour,
   a.jmp_order_quantity AS quantity_of_part,
   total_quantity_shipped
 FROM join_2 AS a
 LEFT JOIN revenue_cte AS b
   ON a.jmo_job_id = b.sml_job_id
 INNER JOIN parts c
-	ON a.jmp_part_id = c.imp_part_id
+	ON a.jmp_part_id = c.imp_part_id)
+SELECT *
+FROM another_cte
 WHERE total_quantity_shipped != 0
-ORDER BY job_id DESC;
+	AND estimated_revenue_per_hour != 0
+	AND completed_revenue_per_hour != 0
+ORDER BY job_id;
 
 
 
