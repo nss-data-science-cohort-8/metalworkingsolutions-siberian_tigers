@@ -1,3 +1,10 @@
+# Mac storage index files
+
+ignore_*/
+.DS_Store
+*.dta
+
+
 # History files
 .Rhistory
 .Rapp.history
