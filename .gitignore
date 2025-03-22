@@ -1,5 +1,5 @@
 # Mac storage index files
-
+data/
 ignore_*/
 .DS_Store
 *.dta
