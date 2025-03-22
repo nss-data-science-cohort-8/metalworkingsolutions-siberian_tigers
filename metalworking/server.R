@@ -1,10 +1,13 @@
 
 
-
-
 function(input, output, session) {
   
-  
+  # updateSelectizeInput(
+  #   session, 
+  #   'Chosen_Firm', 
+  #   choices = (Firm_Industry_Random_Effect_Coeff_Desc_StatSig_y_StatInsig$level), 
+  #   selected = 'Costco Wholesale Corp', 
+  #   server = TRUE)
   
   plot_data_func <- reactive({
     
@@ -34,11 +37,64 @@ function(input, output, session) {
       ) +
       ggtitle("Quantity of Parts Ordered Over Time") +
       facet_wrap(~factor(PartID_LongDescription, levels=c(TopN_Highly_InDemand_Parts_ID_y_LongDescription)))
-    
-    
   })
   
-  output$selecteddataTable <- renderDataTable(plot_data_func())
+  #q2a
+  
+  
+  output$parts_table <- renderDataTable(datatable(complete_data |> 
+                                                    group_by(part_id, part_name) |> 
+                                                    summarize(jobs = max(number_of_jobs_by_part),
+                                                              estimated_hours = sum(estimated_production_hours),
+                                                              revenue = sum(total_revenue),
+                                                              estimated_job_per_hour = (sum(estimated_production_hours) / min(number_of_jobs_by_part)),             estimated_revenue_per_job = sum(total_revenue) / min(number_of_jobs_by_part),
+                                                              revenue_per_hour = mean(estimated_revenue_per_hour)) |> 
+                                                    arrange(desc(jobs)), options = list(displayStart = (input$graph_slide[1] - 1))) 
+  )
+  
+  output$distPlot_Q2a <- renderPlot({
+    parts_table_top_10 <- complete_data |> 
+      group_by(part_id) |>
+      summarize(jobs = min(number_of_jobs_by_part),
+                estimated_hours = sum(estimated_production_hours),
+                revenue = sum(total_revenue),
+                estimated_job_per_hour = (sum(estimated_production_hours) / min(number_of_jobs_by_part)),             estimated_revenue_per_job = sum(total_revenue) / min(number_of_jobs_by_part),
+                revenue_per_hour = mean(estimated_revenue_per_hour)) |>
+      arrange(desc(jobs))
+    
+    sf <- max(parts_table_top_10[input$graph_slide[1]:(input$graph_slide[1] + 9), ]$jobs)/max(parts_table_top_10[input$graph_slide[1]:(input$graph_slide[1] + 9), ]$estimated_hours)
+    
+    parts_longer <- parts_table_top_10[input$graph_slide[1]:(input$graph_slide[1] + 9), ] |> 
+      mutate(estimated_hours = estimated_hours*sf) |> 
+      pivot_longer(names_to = 'y_new', values_to = 'val', jobs:estimated_hours) |> 
+      mutate(y_new = factor(y_new, levels = c('jobs', 'estimated_hours')))
+    
+    subset_to_order <- parts_longer |> 
+      filter(y_new == 'jobs')
+    subset_to_order$part_id = fct_reorder(subset_to_order$part_id, -subset_to_order$val)
+    parts_longer$part_id = factor(parts_longer$part_id, levels = levels(subset_to_order$part_id))
+    
+    ggplot(parts_longer, aes(x=part_id)) +
+      geom_col(aes(y = val, fill = y_new, group = y_new), position=position_dodge(),
+               color="black", alpha=.6)  +
+      scale_fill_manual(values = c("blue", "red")) +
+      scale_y_continuous(name = "number of jobs",labels = scales::comma,sec.axis = sec_axis(~./sf, name="estimated production hours",
+                                                                                            labels = scales::comma))+
+      labs(fill='variable')+
+      theme_bw()+
+      theme(legend.position = 'top',
+            plot.title = element_text(color='black',face='bold',hjust=0.5),
+            axis.text = element_text(color='black',face='bold'),
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+            axis.title.y.right = element_text(color='red',face='bold'),
+            axis.title.y.left = element_text(color='blue',face='bold'),
+            legend.text = element_text(color='black',face='bold'),
+            legend.title = element_text(color='black',face='bold'))+
+      ggtitle('Number of Jobs by Production Hours')
+  })
+  
+  
+  
   
   
   
@@ -68,17 +124,17 @@ function(input, output, session) {
     datatable(
       revenue_data |> 
         select(part_id, part_name, total_quantity_shipped, est_prod_hours, total_revenue, estimated_revenue_per_hour, number_of_jobs),
-          colnames = c(
-            'Part Id',
-            'Part Name', 
-            'Quantity Shipped', 
-            'Total Est Prod Hours', 
-            'Total Revenue', 
-            'Revenue per Est Prod Hour', 
-            'Total Jobs'
-          )
+      colnames = c(
+        'Part Id',
+        'Part Name', 
+        'Quantity Shipped', 
+        'Total Est Prod Hours', 
+        'Total Revenue', 
+        'Revenue per Est Prod Hour', 
+        'Total Jobs'
+      )
     )
   })
-
+  
   
 }

@@ -15,12 +15,22 @@ fluidPage(
   # Drop down menu to select an industry of interest
   sidebarLayout(
     sidebarPanel(
-
+      
     ),
     # Main Panel's top portion has bar graph; bottom portion has table
     mainPanel(
       tabsetPanel(
-        tabPanel(h4('Q2a'), 
+        tabPanel(h4('Q2a'),
+                 fluidRow(
+                   column( 
+                     width = 12, 
+                     div(class = "dynamic_height"),
+                     sliderInput('graph_slide',
+                                 'select range of graph',
+                                 min = 1, max = 1000,
+                                 step = 10, value = 1)
+                   )
+                 ),
                  fluidRow(
                    column( 
                      width = 12, 
@@ -29,7 +39,7 @@ fluidPage(
                    )
                  ),
                  fluidRow(
-                   dataTableOutput("selecteddataTable")
+                   dataTableOutput("parts_table")
                  )
         ),
         tabPanel(h4('Q2b'),  

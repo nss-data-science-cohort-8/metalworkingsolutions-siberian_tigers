@@ -1,7 +1,7 @@
 
 
-
 library(shiny)
+library(shinythemes)
 library(tidyverse)
 library(glue)
 library(DT)
@@ -25,35 +25,33 @@ library(plotly)
 library(nlme)
 library(forcats)
 library(plotly)
-library(shinythemes)
-library(scales)
-
 
 
 # Q2b
 
-Q2b_Data <- read_csv('./data/data-1741913998693_GroupedByDate_n_PartID.csv')
+
+Q2b_Data <- read_csv('data/data-1741913998693_GroupedByDate_n_PartID.csv')
 Q2b_Data <- Q2b_Data |> unite("PartID_LongDescription", jmp_part_id:jmp_part_long_description_text, sep = " Description: ", remove = FALSE)
 
 
-Q2b_Data <- Q2b_Data |>
-  mutate(Production_Due_Date_DateTimeFormat = as_datetime(Q2b_Data$jmp_production_due_date, tz = "US/Eastern", format = NULL)) |>
-  select(jmp_part_id, PartID_LongDescription, total_quantity_for_manufactured_part, Production_Due_Date_DateTimeFormat) |>
+Q2b_Data <- Q2b_Data |> 
+  mutate(Production_Due_Date_DateTimeFormat = as_datetime(Q2b_Data$jmp_production_due_date, tz = "US/Eastern", format = NULL)) |>   
+  select(jmp_part_id, PartID_LongDescription, total_quantity_for_manufactured_part, Production_Due_Date_DateTimeFormat) |>      
   arrange(Production_Due_Date_DateTimeFormat, jmp_part_id)
 
 
-TopN_Highly_InDemand_Parts_ID_y_LongDescription <- Q2b_Data |>
-  group_by(PartID_LongDescription) |>
-  summarise(Sum_of_Total_Quantity_for_Manufactured_Part = sum(total_quantity_for_manufactured_part)) |>
-  arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) |>
-  head(9) |>
+TopN_Highly_InDemand_Parts_ID_y_LongDescription <- Q2b_Data |> 
+  group_by(PartID_LongDescription) |> 
+  summarise(Sum_of_Total_Quantity_for_Manufactured_Part = sum(total_quantity_for_manufactured_part)) |> 
+  arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) |> 
+  head(9) |> 
   pull(PartID_LongDescription)
 
 
 TopN_Highly_InDemand_Parts_ID_y_LongDescription_tibble <- tibble(TopN_Highly_InDemand_Parts_ID_y_LongDescription)
 
 
-TopN_Highly_InDemand_Parts_data <- Q2b_Data |> filter(PartID_LongDescription %in% c(TopN_Highly_InDemand_Parts_ID_y_LongDescription))
+TopN_Highly_InDemand_Parts_data <- Q2b_Data |> filter(PartID_LongDescription %in% c(TopN_Highly_InDemand_Parts_ID_y_LongDescription))  
 
 
 
@@ -64,13 +62,13 @@ TopN_Highly_InDemand_Parts_data |>  distinct(Production_Due_Date_DateTimeFormat)
 YMD_series <- tibble(date = seq(ymd('2022-02-08'), ymd('2025-02-25'), by='1 day'))
 
 
-CrossJoined_YMDseries_TopNParts <- cross_join(YMD_series, TopN_Highly_InDemand_Parts_ID_y_LongDescription_tibble) |>
+CrossJoined_YMDseries_TopNParts <- cross_join(YMD_series, TopN_Highly_InDemand_Parts_ID_y_LongDescription_tibble) |> 
   rename(Production_Due_Date_DateTimeFormat = date, PartID_LongDescription = TopN_Highly_InDemand_Parts_ID_y_LongDescription)
 
 
 LeftJoined_YMDseries_TopNParts <- left_join(CrossJoined_YMDseries_TopNParts, TopN_Highly_InDemand_Parts_data, by = c('Production_Due_Date_DateTimeFormat', 'PartID_LongDescription')) |>
-  replace_na(list(total_quantity_for_manufactured_part = 0))  |>
-  arrange(Production_Due_Date_DateTimeFormat)
+  replace_na(list(total_quantity_for_manufactured_part = 0))  |>  
+  arrange(Production_Due_Date_DateTimeFormat)  
 
 
 LeftJoined_YMDseries_TopNParts_withDescription <- left_join(LeftJoined_YMDseries_TopNParts, TopN_Highly_InDemand_Parts_data, by = c('Production_Due_Date_DateTimeFormat', 'PartID_LongDescription'))
@@ -98,10 +96,14 @@ ggplot_object <- LeftJoined_YMDseries_TopNParts |>
 ggplotly(ggplot_object)
 
 
+# Q2a
 
-metalworking <- read_csv('data/ms.csv')
+complete_data <- read_csv('./data/completed_table.csv')
 
-revenue_data <- metalworking |> 
+
+
+revenue_data <- complete_data |> 
+  filter(!part_id %in% c('Y002-0604', 'Y002-0605', 'Y002-0631', 'Y002-0647')) |> 
   group_by(part_id, part_name) |> 
   summarize(
     total_quantity_shipped = sum(total_quantity_shipped, na.rm = TRUE),
@@ -116,11 +118,18 @@ revenue_data <- metalworking |>
   )
 
 
+
+
+
+
   revenue_data <- revenue_data |> 
     mutate(rev_tooltip = paste(
       'Part Id: ', part_id, '\n', 
       'Quantity Shipped: ', comma(total_quantity_shipped), '\n', 
-      'Revenue per Est Prod Hour: $', round(estimated_revenue_per_hour, 2), '\n', 
+      'Revenue per Est Prod Hour: $', comma(round(estimated_revenue_per_hour, 2)), '\n', 
       'Total Revenue: $', comma(total_revenue)
     ))
-
+  
+  
+  
+  
