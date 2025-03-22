@@ -29,7 +29,7 @@ library(scales)
 # Q2b
 
 
-Q2b_Data <- read_csv('../data/data-1741913998693_GroupedByDate_n_PartID.csv')
+Q2b_Data <- read_csv('./data/data-1741913998693_GroupedByDate_n_PartID.csv')
 Q2b_Data <- Q2b_Data |> unite("PartID_LongDescription", jmp_part_id:jmp_part_long_description_text, sep = " Description: ", remove = FALSE)
 
 
@@ -43,7 +43,7 @@ TopN_Highly_InDemand_Parts_ID_y_LongDescription <- Q2b_Data |>
   group_by(PartID_LongDescription) |> 
   summarise(Sum_of_Total_Quantity_for_Manufactured_Part = sum(total_quantity_for_manufactured_part)) |> 
   arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) |> 
-  head(9) |> 
+  head(6) |> 
   pull(PartID_LongDescription)
 
 
@@ -97,7 +97,7 @@ LeftJoined_YMDseries_TopNParts <- LeftJoined_YMDseries_TopNParts |>
 
 # Q2a
 
-complete_data <- read_csv('../data/completed_table.csv')
+complete_data <- read_csv('./data/completed_table.csv')
 
 
 

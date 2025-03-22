@@ -10,7 +10,7 @@ fluidPage(
   ")),
   
   # Application title
-  titlePanel("Data-derived Insights from Questions 2a~d"),
+  titlePanel("Data-derived Insights for MetalWorking Solutions' Production, Labor, and Revenue"),
   
   # Drop down menu to select an industry of interest
   sidebarLayout(
@@ -19,13 +19,13 @@ fluidPage(
     # Main Panel's top portion has bar graph; bottom portion has table
     mainPanel(
       tabsetPanel(
-        tabPanel(h4('# of Jobs & Estimated Production Hrs'),
+        tabPanel(h4('Total Job Volume vs. Total (Estimated) Production Hrs'),
                  fluidRow(
                    column( 
                      width = 12, 
                      div(class = "dynamic_height"),
                      sliderInput('graph_slide',
-                                 'Select Parts as Arranged by # of Associated Jobs',
+                                 'Select Parts as Arranged by Volume of Associated Jobs',
                                  min = 1, max = 1000,
                                  step = 10, value = 1)
                    )
@@ -41,7 +41,7 @@ fluidPage(
                    dataTableOutput("parts_table")
                  )
         ),
-        tabPanel(h4('Demand Trend for Most High Volume Parts'),  
+        tabPanel(h4('Seasonal Trend for Most In Demand Parts'),  
                  fluidRow(
                    column( 
                      width = 12, 

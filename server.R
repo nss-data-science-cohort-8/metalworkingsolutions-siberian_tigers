@@ -27,7 +27,7 @@ function(input, output, session) {
       TopVol_Parts <- ggplot(LeftJoined_YMDseries_TopNParts, aes(x=Production_Due_Date_DateTimeFormat, y=total_quantity_for_manufactured_part)) +
       geom_line(data = LeftJoined_YMDseries_TopNParts |> dplyr::select(-PartID_LongDescription), aes(group=PartID_LongDescription2), color="grey", linewidth=0.5, alpha=0.5) +
       geom_point( aes(color=PartID_LongDescription), color="#69b3a2" ) +
-      labs(title = 'Trend in Quantity Ordered', 
+      labs(title = 'Seasonal Trend in Quantity Ordered', 
            x = 'Year', 
            y = 'Quantity Ordered per Day') + 
       geom_line( aes(color=PartID_LongDescription), color="#69b3a2", linewidth=0.15 ) +
@@ -97,14 +97,15 @@ function(input, output, session) {
       labs(fill='variable')+
       theme_bw()+
       theme(legend.position = 'top',
-            plot.title = element_text(color='black',face='bold',hjust=0.5),
-            axis.text = element_text(color='black',face='bold'),
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-            axis.title.y.right = element_text(color='red',face='bold'),
-            axis.title.y.left = element_text(color='blue',face='bold'),
+            plot.title = element_text(size = 24, color='black',face='bold',hjust=0.5),
+            axis.text = element_text(size = 17, color='black',face='bold'),
+            axis.text.x = element_text(size = 17, angle = 90, vjust = 0.5, hjust=1),
+            axis.title.y.right = element_text(size = 20, color='red',face='bold'),
+            axis.title.y.left = element_text(size = 20, color='blue',face='bold'),
+            axis.title.x = element_text(size = 22, color='brown',face='bold'),
             legend.text = element_text(color='black',face='bold'),
             legend.title = element_text(color='black',face='bold'))+
-      ggtitle('Number of Jobs by Production Hrs')
+      ggtitle('Total Job Volume vs. Total (Estimated) Production Hrs')
   })
   
   
