@@ -25,6 +25,9 @@ library(forcats)
 library(plotly)
 
 
+# Q2a
+
+
 # Q2b
 
 
@@ -76,22 +79,22 @@ LeftJoined_YMDseries_TopNParts <- LeftJoined_YMDseries_TopNParts |>
                                     mutate(PartID_LongDescription2 = PartID_LongDescription)
 
 
-ggplot_object <- LeftJoined_YMDseries_TopNParts |>
-                    ggplot( aes(x=Production_Due_Date_DateTimeFormat, y=total_quantity_for_manufactured_part)) +
-                    geom_line(data = LeftJoined_YMDseries_TopNParts |> dplyr::select(-PartID_LongDescription), aes(group=PartID_LongDescription2), color="grey", linewidth=0.5, alpha=0.5) +
-                    geom_point( aes(color=PartID_LongDescription), color="#69b3a2" ) +
-                    geom_line( aes(color=PartID_LongDescription), color="#69b3a2", linewidth=0.15 ) +
-                    scale_color_viridis(discrete = TRUE) +
-                    theme_ipsum() +
-                    theme(
-                      legend.position="none",
-                      plot.title = element_text(size=14),
-                      panel.grid = element_blank()
-                    ) +
-                    ggtitle("Quantity of Parts Ordered Over Time") +
-                    facet_wrap(~factor(PartID_LongDescription, levels=c(TopN_Highly_InDemand_Parts_ID_y_LongDescription)))
-
-ggplotly(ggplot_object)
+# ggplot_object <- LeftJoined_YMDseries_TopNParts |>
+#                     ggplot( aes(x=Production_Due_Date_DateTimeFormat, y=total_quantity_for_manufactured_part)) +
+#                     geom_line(data = LeftJoined_YMDseries_TopNParts |> dplyr::select(-PartID_LongDescription), aes(group=PartID_LongDescription2), color="grey", linewidth=0.5, alpha=0.5) +
+#                     geom_point( aes(color=PartID_LongDescription), color="#69b3a2" ) +
+#                     geom_line( aes(color=PartID_LongDescription), color="#69b3a2", linewidth=0.15 ) +
+#                     scale_color_viridis(discrete = TRUE) +
+#                     theme_ipsum() +
+#                     theme(
+#                       legend.position="none",
+#                       plot.title = element_text(size=14),
+#                       panel.grid = element_blank()
+#                     ) +
+#                     ggtitle("Quantity of Parts Ordered Over Time") +
+#                     facet_wrap(~factor(PartID_LongDescription, levels=c(TopN_Highly_InDemand_Parts_ID_y_LongDescription)))
+# 
+# ggplotly(ggplot_object)
 
 
 
