@@ -15,7 +15,6 @@ fluidPage(
   # Drop down menu to select an industry of interest
   sidebarLayout(
     sidebarPanel(
-      
     ),
     # Main Panel's top portion has bar graph; bottom portion has table
     mainPanel(
@@ -65,9 +64,15 @@ fluidPage(
                    column( 
                      width = 12, 
                      tabsetPanel(
-                       tabPanel('Scatter Plot', plotlyOutput('rev_scatter')), 
-                       tabPanel('Data Table', DTOutput('rev_table'))
-                     )
+                       tabPanel('Scatter Plot', 
+                                  plotlyOutput('rev_scatter'), 
+                                  textInput( 
+                                             "Insight_Text", 
+                                             "Insight: Parts that generate the largest amount of total revenue tend not to generate large amount of revenue per hour of labor.", 
+                                              placeholder = "Take additional notes here"
+                                            ) 
+                                ), 
+                       tabPanel('Data Table', DTOutput('rev_table')) )
                    )
                  )
         )
