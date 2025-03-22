@@ -1,0 +1,24 @@
+
+
+```{r}
+metalworking |> 
+  group_by(part_id, part_name) |> 
+  summarize(
+    total_quantity_shipped = sum(total_quantity_shipped, na.rm = TRUE),
+    est_prod_hours = sum(estimated_production_hours, na.rm = TRUE),
+    total_revenue = sum(total_revenue, na.rm = TRUE),
+    estimated_revenue_per_hour = ifelse(
+      est_prod_hours == 0 | total_revenue == 0, 0,  
+      ifelse(est_prod_hours < 1, est_prod_hours * total_revenue, 
+             total_revenue / est_prod_hours) 
+    ),
+    number_of_jobs = min(number_of_jobs_by_part, na.rm = TRUE)
+  ) |> 
+  #arrange(desc(total_quantity_shipped))
+   arrange(desc(estimated_revenue_per_hour))
+```
+
+
+
+
+

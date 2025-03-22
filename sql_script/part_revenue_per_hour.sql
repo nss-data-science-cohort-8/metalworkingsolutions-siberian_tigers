@@ -13,9 +13,9 @@ FULL JOIN parts b
 job_ops_count AS(
 SELECT 
 	jmo_job_id
-	,SUM(a.jmo_actual_production_hours) AS twenty_four
-	,SUM(b.jmo_actual_production_hours) AS twenty_three
-	,(SUM(a.jmo_actual_production_hours) + SUM(b.jmo_actual_production_hours)) AS total_hours
+	,SUM(a.jmo_estimated_production_hours) AS twenty_four
+	,SUM(b.jmo_estimated_production_hours) AS twenty_three
+	,(SUM(a.jmo_estimated_production_hours) + SUM(b.jmo_estimated_production_hours)) AS total_hours
 FROM job_operations_2024 a
 FULL JOIN job_operations_2023 b
 	USING(jmo_job_id)
@@ -56,10 +56,13 @@ ORDER BY 2 DESC
   -- revenue code
 ), revenue_cte AS (
   SELECT
-    oml_part_id AS part_id,
-    -- using oml_extended_price_base, slightly less than oml_full_extended_price_base for two sales_order_ids, but figured the order had a discount
-    SUM(oml_extended_price_base) AS revenue
-  FROM sales_order_lines
+    -- oml_part_id AS part_id,
+    sml_part_id AS part_id,
+    -- found each part price in shipment lines table, updated to use shipment lines rather than salesorderlines
+    -- SUM(oml_extended_price_base) AS revenue
+    SUM(sml_extended_price_base) AS revenue
+  -- FROM sales_order_lines
+  FROM shipment_lines
   GROUP BY 1
 )
 SELECT 
@@ -75,6 +78,7 @@ SELECT
   COALESCE(b.revenue, 0) AS total_revenue,
   CASE
     WHEN a.production_hours = 0 THEN COALESCE(b.revenue, 0) / (a.production_hours+ a.n_of_jobs)
+    WHEN a.production_hours < 1 THEN COALESCE(b.revenue, 0) * a.production_hours
     ELSE COALESCE(b.revenue, 0) / a.production_hours
   END AS revenue_per_hour
 FROM join_2 AS a
@@ -84,8 +88,12 @@ GROUP BY 1, 2, 3, 4, 5, 6
 ;
 
 
+-- 🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖
 
-
-
+  CASE
+    WHEN a.production_hours = 0 THEN COALESCE(b.revenue, 0) / (a.production_hours+ a.n_of_jobs)
+    WHEN a.production_hours < 1 THEN COALESCE(b.revenue, 0) * a.production_hours
+    ELSE COALESCE(b.revenue, 0) / a.production_hours
+  END AS revenue_per_hour
 
 
