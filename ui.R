@@ -59,7 +59,7 @@ fluidPage(
                    )
                  )
         ),
-        tabPanel(h4('Revenue Per Production Hr'),  
+        tabPanel(h4('Revenue per Production Hr'),  
                  fluidRow(
                    column( 
                      width = 12, 

@@ -98,11 +98,11 @@ function(input, output, session) {
       theme_bw()+
       theme(legend.position = 'top',
             plot.title = element_text(size = 24, color='black',face='bold',hjust=0.5),
-            axis.text = element_text(size = 17, color='black',face='bold'),
+            axis.text = element_text(size = 21.5, color='black',face='bold'),
             axis.text.x = element_text(size = 17, angle = 90, vjust = 0.5, hjust=1),
             axis.title.y.right = element_text(size = 20, color='red',face='bold'),
             axis.title.y.left = element_text(size = 20, color='blue',face='bold'),
-            axis.title.x = element_text(size = 22, color='brown',face='bold'),
+            axis.title.x = element_text(size = 21.5, color='brown',face='bold'),
             legend.text = element_text(color='black',face='bold'),
             legend.title = element_text(color='black',face='bold'))+
       ggtitle('Total Job Volume vs. Total (Estimated) Production Hrs')
