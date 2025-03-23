@@ -97,8 +97,8 @@ LeftJoined_YMDseries_TopNParts <- LeftJoined_YMDseries_TopNParts |>
 
 # Q2a
 
-complete_data <- read_csv('./data/completed_table.csv')
-# complete_data_RDS <- readRDS("./data/completed_table.Rds")
+# complete_data_CSV <- read_csv('./data/completed_table.csv')
+complete_data <- readRDS("./data/completed_table.Rds")
 
 
 revenue_data <- complete_data |> 
