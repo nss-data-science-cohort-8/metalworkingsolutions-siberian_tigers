@@ -98,7 +98,7 @@ LeftJoined_YMDseries_TopNParts <- LeftJoined_YMDseries_TopNParts |>
 # Q2a
 
 complete_data <- read_csv('./data/completed_table.csv')
-
+# complete_data_RDS <- readRDS("./data/completed_table.Rds")
 
 
 revenue_data <- complete_data |> 
@@ -122,7 +122,7 @@ revenue_data <- complete_data |>
                       mutate(rev_tooltip = paste(
                         'Part Id: ', part_id, '\n', 
                         'Quantity Shipped: ', comma(total_quantity_shipped), '\n', 
-                        'Revenue per Est Prod Hour: $', comma(round(estimated_revenue_per_hour, 2)), '\n', 
+                        'Revenue per Est Production Hr: $', comma(round(estimated_revenue_per_hour, 2)), '\n', 
                         'Total Revenue: $', comma(total_revenue)
                       )) |>  
                       arrange(desc(estimated_revenue_per_hour)) 

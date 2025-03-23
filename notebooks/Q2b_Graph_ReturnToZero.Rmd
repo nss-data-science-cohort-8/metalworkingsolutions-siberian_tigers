@@ -182,12 +182,12 @@ ggplotly(ggplot_object)
 ```
 
 ```{r}
-# saveRDS(ggplot_object, "../data/Top6_High_Vol_Parts.Rds")
+# complete_data_CSV <- read_csv('../data/completed_table.csv')
+# saveRDS(complete_data_CSV, "../data/completed_table.Rds")
 ```
 
 
 ```{r}
-# Top6_High_Vol_Parts <- readRDS("../data/Top6_High_Vol_Parts.Rds")
-# ggplotly(Top6_High_Vol_Parts)
+# complete_data <- readRDS("../data/completed_table.Rds") 
 ```
 
