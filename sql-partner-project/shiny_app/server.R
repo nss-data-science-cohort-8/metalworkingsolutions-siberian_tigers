@@ -234,10 +234,11 @@ output$opsChart <- renderPlot ({
                                                    'SET_UP')), 
                y = hours, 
                fill = measurement)) +
-    geom_col(position='dodge') +
+    geom_col(color="black", alpha=.6, position='dodge') +
     scale_x_discrete(guide = guide_axis(angle = 90)) +
     theme(legend.title = element_blank()) +
     scale_fill_hue(labels = c("Average Total Hours", "Average Difference in Hours (Est v Act)")) +
+    scale_fill_manual(values = c("#69b3a2", "grey")) +
     labs(
       title = title,
       x = "Process",
@@ -282,3 +283,5 @@ output$partsChart <- renderPlot ({
 })
 
 }
+
+

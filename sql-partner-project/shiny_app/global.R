@@ -162,3 +162,4 @@ hours_parts <- job_ops |>
 
 hours_parts <- hours_parts |> 
   filter(avg_hr_diff != 0, num_parts >2)
+

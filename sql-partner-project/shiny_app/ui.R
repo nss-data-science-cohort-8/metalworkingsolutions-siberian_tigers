@@ -65,10 +65,18 @@ fluidPage(
         tabPanel(h4('Seasonal Trend for Most In Demand Parts'),  
                  fluidRow(
                    column( 
-                     width = 12, 
+                     width = 9, 
                      div(class = "dynamic_height",
                          style = "display: flex; justify-content: center; align-items: center"),
                      plotlyOutput("distPlot_Q2b", height = "900px")
+                   ),
+                   column( 
+                     width = 3, 
+                     div(class = "dynamic_height",
+                         style = "display: flex; justify-content: center; align-items: center"),
+                     h4(HTML(
+                       'Information about this data'
+                     ))
                    )
                  ),
                  fluidRow(
@@ -88,14 +96,43 @@ fluidPage(
                          style = "display: flex; justify-content: center; align-items: center"),
                      tabsetPanel(
                        tabPanel("Processes",
-                                div(class = "dynamic_height",
-                                    style = "display: flex; justify-content: center; align-items: center"),
-                                plotOutput(outputId = "opsChart"),
-                                DT::DTOutput(outputId = "opsTable")
+                                fluidRow(
+                                  column( 
+                                    width = 9,
+                                    div(class = "dynamic_height",
+                                        style = "display: flex; justify-content: center; align-items: center"),
+                                    plotOutput(outputId = "opsChart"),
+                                    DT::DTOutput(outputId = "opsTable")
+                                  ),
+                                  column( 
+                                    width = 3, 
+                                    div(class = "dynamic_height",
+                                        style = "display: flex; justify-content: center; align-items: center"),
+                                    h4(HTML(
+                                      'Information about this data'
+                                    )
+                                    )
+                                  )
+                                )
                        ), 
                        tabPanel("Parts",
-                                plotOutput(outputId = "partsChart"),
-                                DT::DTOutput(outputId = "partsTable")
+                                fluidRow(
+                                  column( 
+                                    width = 9,
+                                    div(class = "dynamic_height",
+                                        style = "display: flex; justify-content: left; align-items: left"),
+                                    plotOutput(outputId = "partsChart"),
+                                    DT::DTOutput(outputId = "partsTable")
+                                  ),
+                                  column(
+                                    width = 3,
+                                    div(class = "dynamic_height",
+                                        style = "display: flex; justify-content: right; align-items: right"),
+                                    h4(HTML(
+                                      'Information about this data'
+                                    ))
+                                  )
+                                )
                        ) 
                      )
                    )
@@ -138,3 +175,4 @@ fluidPage(
     )
   )
 ) 
+
