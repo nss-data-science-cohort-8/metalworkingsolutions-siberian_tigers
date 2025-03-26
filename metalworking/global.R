@@ -117,23 +117,18 @@ revenue_data <- complete_data |>
   )
 
 revenue_data <- revenue_data |> 
-  # mutate(rev_tooltip = paste(
-  #   'Part Id: ', part_id, '\n', 
-  #   'Quantity Shipped: ', comma(total_quantity_shipped), '\n', 
-  #   'Revenue per Est Production Hr: ', dollar(round(estimated_revenue_per_hour, 2)), '\n', 
-  #   'Total Revenue: ', dollar(round(total_revenue), 2)
-  # )) |>  
   arrange(desc(estimated_revenue_per_hour)) 
 
 revenue_data_plot <- revenue_data |> 
   mutate(rev_tooltip = paste(
     'Part Id: ', part_id, '\n', 
     'Quantity Shipped: ', comma(total_quantity_shipped), '\n', 
-    'Revenue per Est Production Hr: ', dollar(round(estimated_revenue_per_hour, 2)), '\n', 
-    'Total Revenue: ', dollar(round(total_revenue), 2)
+    'Total Revenue: ', dollar(round(total_revenue), 2), '\n',  
+    'Est Prod Hours: ', comma(est_prod_hours, accuracy = 0.01), '\n', 
+    'Revenue per Est Production Hr: ', dollar(round(estimated_revenue_per_hour, 2))
   )) |>  
   arrange(desc(estimated_revenue_per_hour)) |> 
-  filter(total_revenue > 10000)
+  filter(total_quantity_shipped > 1000)
 
 
 

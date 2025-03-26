@@ -133,21 +133,22 @@ function(input, output, session) {
         alpha = 0.5,
         show.legend = TRUE
       ) + 
-      labs(title = 'Revenue per Estimated Production Hours by Volume Shipped and Total Revenue greater than 10,000', 
+      labs(title = 'Revenue per Estimated Production Hours by Volume Shipped (> 1,000 Units)',
            x = 'Total Quantity Shipped (Log Scale)',
            y = 'Revenue per Est Production Hr (USD/Hr)'
       ) +
       scale_x_log10(
-        breaks = c(10, 100, 1000, 10000, 100000),
+        breaks = c(1000, 2500, 5000, 10000, 15000, 30000, 60000, 100000),
         labels = comma
       ) +
       scale_y_continuous(labels = comma) + 
       theme(legend.position = "none")
     
-    ggplotly(rev_plot, tooltip = "text") |> 
-      layout(height = 600, width = 1200)
+    ggplotly(rev_plot, tooltip = 'text', height = 600, width = 1200)
     
   })
+  
+  
   
   
 
@@ -185,6 +186,7 @@ function(input, output, session) {
   
 
   
+
   
   
   #Q2c
