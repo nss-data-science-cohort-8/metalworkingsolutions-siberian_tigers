@@ -53,7 +53,7 @@ function(input, output, session) {
     
   })
   
-  output$q2bTable  <-  renderDataTable(Q2b_Data)
+  output$q2bTable  <-  renderDataTable(TopN_Highly_InDemand_Parts_ID_y_LongDescription_2)
   
   #Q2a
   
@@ -62,11 +62,12 @@ function(input, output, session) {
                                                     group_by(part_id, part_name) |> 
                                                     summarize(jobs = max(number_of_jobs_by_part),
                                                               `Estimated Hours` = round(sum(estimated_production_hours), 2),
-                                                              Revenue = round(sum(total_revenue), 2),
+                                                              Revenue = comma(sum(total_revenue), accuracy = 0.01),
                                                               `Estimated Hours Per Job` = round((sum(estimated_production_hours) / min(number_of_jobs_by_part)), 2), 
                                                               `Estimated Revenue per Job` = round(sum(total_revenue) / min(number_of_jobs_by_part), 2),
                                                               `Revenue per Hour` = round(mean(estimated_revenue_per_hour)), 2) |> 
-                                                    rename(`Part ID` = part_id, `Part Name` = part_name) |> 
+                                                    rename(`Part ID` = part_id, `Part Name` = part_name) |>
+                                                    select(-`2`) |> 
                                                     arrange(desc(jobs)), options = list(displayStart = (input$graph_slide[1] - 1))) 
   )
   
@@ -125,33 +126,39 @@ output$rev_scatter <- renderPlotly({
   
   rev_plot <- ggplot(revenue_data_plot, 
                      aes(
-                       x = log10(total_quantity_shipped), 
+                       x = total_quantity_shipped, 
                        y = estimated_revenue_per_hour, 
                        size = total_revenue, 
                        color = part_name,
-                       text = rev_tooltip))+ 
+                       text = rev_tooltip)) + 
     geom_point(
       alpha = 0.5,
       show.legend = TRUE
     ) + 
-    labs(title = 'Revenue per Estimated Production Hours by Volume Shipped and Total Revenue greater than 10,000', 
-         x = 'Log10 (Total Quantity Shipped)', 
-         y = 'Revenue per Est Production Hr (USD/Hr)' 
+    labs(title = 'Revenue per Estimated Production Hours by Volume Shipped (> 1,000 Units)',
+         x = 'Total Quantity Shipped (Log Scale)',
+         y = 'Revenue per Est Production Hr (USD/Hr)'
     ) +
+    scale_x_log10(
+      breaks = c(1000, 2500, 5000, 10000, 15000, 30000, 60000, 100000),
+      labels = comma
+    ) +
+    scale_y_continuous(labels = comma) + 
     theme(legend.position = "none")
   
-  ggp_build_Rev_Plot <- plotly_build(rev_plot)
-  ggp_build_Rev_Plot$layout$height = 2200
-  ggp_build_Rev_Plot$layout$width = 2600
-  ggp_build_Rev_Plot
+  ggplotly(rev_plot, tooltip = 'text', height = 600, width = 1200)
+  
 })
-
-
 
 output$rev_table <- renderDT({
   datatable(
     revenue_data |>
-      mutate(estimated_revenue_per_hour = round(estimated_revenue_per_hour, 2)) |> 
+      mutate(
+        total_quantity_shipped = comma(total_quantity_shipped),  
+        est_prod_hours = comma(est_prod_hours),                 
+        total_revenue = comma(total_revenue, accuracy = 0.01),  
+        estimated_revenue_per_hour = comma(estimated_revenue_per_hour, accuracy = 0.01)
+      ) |> 
       select(part_id, 
              part_name,
              total_quantity_shipped, 
@@ -164,8 +171,8 @@ output$rev_table <- renderDT({
       'Part Name', 
       'Quantity Shipped', 
       'Total Est Prod Hours', 
-      'Total Revenue', 
-      'Revenue per Est Prod Hour', 
+      'Total Revenue ($)', 
+      'Revenue per Est Prod Hour ($)', 
       'Total Jobs'
     ),
     options = list(
@@ -173,4 +180,105 @@ output$rev_table <- renderDT({
     )
   )
 })
+
+#Q2c
+custom_theme = theme(
+  title = element_text(size = 20),
+  axis.title.x = element_text(size = 18),
+  axis.text.x = element_text(size = 16),
+  axis.title.y = element_text(size = 18))
+  
+
+output$opsTable <- DT::renderDT({
+  plot_data <- hours_ops
+  
+  # if (input$process != "ALL"){
+  #   
+  #   plot_data <- hours_ops |> 
+  #     filter(short_description == input$process)
+  # }
+  plot_data |> 
+    DT::datatable(
+      colnames = c("Process" = "short_description", 
+                   "Number of Jobs" = "num_jobs", 
+                   "Total Hours" = "total_hours", 
+                   "Average Hours" = "avg_hr",
+                   "Average Difference between Estimated and Actual Hours" = 'avg_hr_diff')
+    )
+})
+
+output$opsChart <- renderPlot ({
+  
+  title <- "Summary of Processes"
+  
+  plot_data <- hours_ops_longer
+  
+  # if (input$process != "ALL"){
+  #   
+  #   plot_data <- hours_ops_longer |> 
+  #     filter(short_description == input$process)
+  # }
+  plot_data |> 
+    ggplot(aes(x=factor(short_description, level=c('ZINC_PLATE', 
+                                                   'POWDER_COAT', 
+                                                   'GALVANIZE', 
+                                                   'WELD', 
+                                                   'PART_TRANSFER',
+                                                   'MACHINE',
+                                                   'TURRET_PUNCH',
+                                                   'OTHER',
+                                                   'PRESS_BRAKE',
+                                                   'SAW',
+                                                   'LASER',
+                                                   'PACK',
+                                                   'SET_UP')), 
+               y = hours, 
+               fill = measurement)) +
+    geom_col(position='dodge') +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme(legend.title = element_blank()) +
+    scale_fill_hue(labels = c("Average Total Hours", "Average Difference in Hours (Est v Act)")) +
+    labs(
+      title = title,
+      x = "Process",
+      y = 'Hours'
+    ) +
+    custom_theme
+})
+
+output$partsTable <- DT::renderDT({
+  hours_parts |>
+    DT::datatable(
+      colnames = c("Part ID" = "part_id", 
+                   "Number of Parts" = "num_parts", 
+                   "Total Hours" = "total_hours", 
+                   "Average Hours" = "avg_hr",
+                   "Average Difference between Estimated and Actual Hours" = 'avg_hr_diff')
+    )
+})
+
+output$partsChart <- renderPlot ({
+  
+  title <- "Avg Difference between Estimated and Actual Production Hours"
+  
+  hours_parts |> 
+    ggplot(aes(x=factor(part_id, level=c('Y002-0562',
+                                         'C057-0000I',
+                                         'U013-0001',
+                                         'S046-0169',
+                                         'F022-0007',
+                                         'S046-0156',
+                                         'M030-0004')), 
+               y=avg_hr_diff)) +
+    geom_col() +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    labs(
+      title = title,
+      x = 'Part ID',
+      y = 'Difference in Hours'
+    ) +
+    custom_theme
+  
+})
+
 }

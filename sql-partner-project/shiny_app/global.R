@@ -32,7 +32,6 @@ library(scales)
 Q2b_Data <- read_csv('./data/data-1741913998693_GroupedByDate_n_PartID.csv')
 Q2b_Data <- Q2b_Data |> unite("PartID_LongDescription", jmp_part_id:jmp_part_long_description_text, sep = " Description: ", remove = FALSE)
 
-
 Q2b_Data <- Q2b_Data |> 
   mutate(Production_Due_Date_DateTimeFormat = as_datetime(Q2b_Data$jmp_production_due_date, tz = "US/Eastern", format = NULL)) |>   
   select(jmp_part_id, PartID_LongDescription, total_quantity_for_manufactured_part, Production_Due_Date_DateTimeFormat) |>      
@@ -45,6 +44,12 @@ TopN_Highly_InDemand_Parts_ID_y_LongDescription <- Q2b_Data |>
   arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) |> 
   head(6) |> 
   pull(PartID_LongDescription)
+
+TopN_Highly_InDemand_Parts_ID_y_LongDescription_2 <- Q2b_Data |> 
+  group_by(PartID_LongDescription) |> 
+  summarise(`Total Quantity for Manufactured Part` = sum(total_quantity_for_manufactured_part)) |>
+  rename(`Part ID and Description` = PartID_LongDescription) |> 
+  arrange(desc(`Total Quantity for Manufactured Part`))
 
 
 TopN_Highly_InDemand_Parts_ID_y_LongDescription_tibble <- tibble(TopN_Highly_InDemand_Parts_ID_y_LongDescription)
@@ -117,20 +122,43 @@ revenue_data <- complete_data |>
   )
 
 revenue_data <- revenue_data |> 
-  mutate(rev_tooltip = paste(
-    'Part Id: ', part_id, '\n', 
-    'Quantity Shipped: ', comma(total_quantity_shipped), '\n', 
-    'Revenue per Est Production Hr: $', comma(round(estimated_revenue_per_hour, 2)), '\n', 
-    'Total Revenue: $', comma(total_revenue)
-  )) |>  
   arrange(desc(estimated_revenue_per_hour)) 
 
 revenue_data_plot <- revenue_data |> 
   mutate(rev_tooltip = paste(
     'Part Id: ', part_id, '\n', 
     'Quantity Shipped: ', comma(total_quantity_shipped), '\n', 
-    'Revenue per Est Production Hr: $', comma(round(estimated_revenue_per_hour, 2)), '\n', 
-    'Total Revenue: $', comma(total_revenue)
+    'Total Revenue: ', dollar(round(total_revenue), 2), '\n',  
+    'Est Prod Hours:', comma(est_prod_hours, accuracy = 0.01), '\n', 
+    'Revenue per Est Production Hr: ', dollar(round(estimated_revenue_per_hour, 2))
   )) |>  
   arrange(desc(estimated_revenue_per_hour)) |> 
-  filter(total_revenue > 10000)
+  filter(total_quantity_shipped > 1000)
+
+#Q2c
+
+job_ops <- read.csv('./data/job_ops_23-24.csv')
+
+job_ops <- job_ops |> 
+  mutate(hours_diff = completed_production_hours - reestimated_hours, hours_diff_2 = completed_production_hours - est_hours)
+
+hours_ops <- job_ops |>
+  filter(completed_production_hours != 0, est_hours != 0) |> 
+  group_by(short_description) |> 
+  summarise(num_jobs = n(), total_hours = sum(completed_production_hours), avg_hr = mean(completed_production_hours), avg_hr_diff = mean(hours_diff)) |> 
+  mutate_if(is.numeric,~round(.,digits=0)) |> 
+  arrange(desc(total_hours))
+
+hours_ops_longer <- hours_ops |> 
+  select(-c(num_jobs, total_hours)) |> 
+  pivot_longer(!short_description, names_to = "measurement", values_to = "hours")
+
+hours_parts <- job_ops |>
+  filter(completed_production_hours != 0, reestimated_hours != 0) |> 
+  group_by(part_id) |> 
+  summarise(num_parts = n(), total_hours = sum(completed_production_hours), avg_hr = mean(completed_production_hours), avg_hr_diff = mean(hours_diff)) |> 
+  mutate_if(is.numeric,~round(.,digits=0)) |> 
+  arrange(desc(total_hours))
+
+hours_parts <- hours_parts |> 
+  filter(avg_hr_diff != 0, num_parts >2)
