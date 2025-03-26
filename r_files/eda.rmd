@@ -32,28 +32,7 @@ metalworking |>
 
 
 
-```{r}
-plot_ly(
-  revenue_data,
-  x = ~total_quantity_shipped,
-  y = ~estimated_revenue_per_hour,
-  size = ~total_revenue,
-  color = ~part_name,
-  text = ~paste(
-    "Part Name: ", part_name, "<br>",
-    "Quantity Shipped: ", total_quantity_shipped, "<br>",
-    "Revenue per Hour: $", round(estimated_revenue_per_hour, 2), "<br>",
-    "Total Revenue: $", total_revenue
-  ),
-  type = "scatter",
-  mode = "markers"
-) %>%
-  layout(
-    title = "Bubble Chart: Volume vs Revenue per Production Hour",
-    xaxis = list(title = "Total Quantity Shipped"),
-    yaxis = list(title = "Revenue per Production Hour ($)")
-  )
-```
+
 
 
 
