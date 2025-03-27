@@ -41,13 +41,22 @@ Q2b_Data
 
 ```
 
+```{r}
+TopN_Highly_InDemand_Parts_ID_y_LongDescription_Intermediate_Step_see_TotalQuantityEachPart <- Q2b_Data |> 
+                                group_by(PartID_LongDescription) |> 
+                                summarise(Sum_of_Total_Quantity_for_Manufactured_Part = sum(total_quantity_for_manufactured_part)) |> 
+                                arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) 
+
+TopN_Highly_InDemand_Parts_ID_y_LongDescription_Intermediate_Step_see_TotalQuantityEachPart
+```
+
 ```{r} 
 
 TopN_Highly_InDemand_Parts_ID_y_LongDescription <- Q2b_Data |> 
                                 group_by(PartID_LongDescription) |> 
                                 summarise(Sum_of_Total_Quantity_for_Manufactured_Part = sum(total_quantity_for_manufactured_part)) |> 
-                                arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) |> 
-                                head(9) |> 
+                                arrange(desc(Sum_of_Total_Quantity_for_Manufactured_Part)) |>
+                                head(9) |>
                                 pull(PartID_LongDescription)
 
 TopN_Highly_InDemand_Parts_ID_y_LongDescription
